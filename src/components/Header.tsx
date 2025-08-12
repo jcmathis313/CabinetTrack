@@ -54,7 +54,8 @@ const Header: React.FC = () => {
               <img 
                 src={organizationalSettings.mobileIconUrl} 
                 alt={organizationalSettings.companyName || 'Company Icon'} 
-                className="h-8 w-8 object-contain md:hidden"
+                className="h-8 w-8 object-contain block md:hidden"
+                style={{ maxWidth: '32px', maxHeight: '32px' }}
               />
             )}
             
@@ -63,19 +64,20 @@ const Header: React.FC = () => {
               <img 
                 src={organizationalSettings.logoUrl} 
                 alt={organizationalSettings.companyName || 'Company Logo'} 
-                className={`h-8 w-auto max-w-48 object-contain ${organizationalSettings.mobileIconUrl ? 'hidden md:block' : ''}`}
+                className={`h-8 w-auto object-contain ${organizationalSettings.mobileIconUrl ? 'hidden md:block' : 'block'}`}
+                style={{ maxWidth: '192px', maxHeight: '32px' }}
               />
             ) : (
-              <>
+              <div className="flex items-center space-x-2">
                 <Package className="h-8 w-8 text-indigo-600" />
                 <h1 className="text-xl font-bold text-gray-900">
                   {organizationalSettings.companyName || user.organization.name || 'CabinetTrack'}
                 </h1>
-              </>
+              </div>
             )}
           </Link>
           
-          <nav className="flex items-center space-x-4 ml-auto">
+          <nav className="flex items-center ml-auto" style={{ gap: '16px' }}>
             <Link
               to="/"
               className={`inline-flex items-center p-2 rounded-md text-sm font-medium transition-colors ${

@@ -435,7 +435,7 @@ const OrganizationalSettingsTab: React.FC = () => {
       {!isEditing && (
         <div className="bg-gray-50 rounded-lg p-4">
           <h4 className="text-sm font-medium text-gray-900 mb-2">Current Settings</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 text-sm" style={{ gap: '16px' }}>
             <div>
               <span className="text-gray-500">Company:</span>
               <p className="text-gray-900">{formData.companyName || 'Not set'}</p>
