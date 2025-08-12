@@ -152,6 +152,8 @@ export class StorageService {
     }
     
     return {
+      id: '',
+      organizationId: '',
       companyName: '',
       companyAddress: '',
       companyPhone: '',

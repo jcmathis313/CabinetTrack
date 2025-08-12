@@ -43,7 +43,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         lastName: 'User',
         organizationId: 'mock-org-id',
         role: 'admin',
-        isActive: true,
+        permissions: {
+          canManageUsers: true,
+          canManageBilling: true,
+          canViewReports: true,
+          canManageSettings: true
+        },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
@@ -122,6 +127,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         firstName: userData.first_name,
         lastName: userData.last_name,
         role: userData.role,
+        permissions: {
+          canManageUsers: true,
+          canManageBilling: true,
+          canViewReports: true,
+          canManageSettings: true
+        },
         organization: {
           id: org.id,
           name: '', // Will be populated in refreshUser
@@ -229,6 +240,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         firstName: userData.first_name,
         lastName: userData.last_name,
         role: userData.role,
+        permissions: {
+          canManageUsers: true,
+          canManageBilling: true,
+          canViewReports: true,
+          canManageSettings: true
+        },
         organization: {
           id: org.id,
           name: credentials.organizationName,

@@ -96,7 +96,7 @@ export class SubscriptionService {
           }
         ];
         console.log('SubscriptionService: Returning default plans:', defaultPlans);
-        return defaultPlans;
+        return defaultPlans as SubscriptionPlan[];
       }
       
       return mappedPlans;
@@ -245,7 +245,7 @@ export class SubscriptionService {
           plan: planName,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userData.organization_id)
+        .eq('id', user.organizationId)
 
       if (error) throw error
 
