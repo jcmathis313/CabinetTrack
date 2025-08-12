@@ -2,8 +2,8 @@
 -- Run this in your Supabase SQL Editor
 
 -- First, let's check what columns currently exist
-SELECT 'Current manufacturers columns:' as info;
-SELECT column_name FROM information_schema.columns WHERE table_name = 'manufacturers' ORDER BY column_name;
+SELECT 'Current sources columns:' as info;
+SELECT column_name FROM information_schema.columns WHERE table_name = 'sources' ORDER BY column_name;
 
 SELECT 'Current designers columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'designers' ORDER BY column_name;
@@ -11,9 +11,9 @@ SELECT column_name FROM information_schema.columns WHERE table_name = 'designers
 SELECT 'Current drivers columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'drivers' ORDER BY column_name;
 
--- Drop and recreate manufacturers table with correct structure
-DROP TABLE IF EXISTS manufacturers CASCADE;
-CREATE TABLE manufacturers (
+-- Drop and recreate sources table with correct structure
+DROP TABLE IF EXISTS sources CASCADE;
+CREATE TABLE sources (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
@@ -50,8 +50,8 @@ CREATE TABLE drivers (
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_manufacturers_organization_id ON manufacturers(organization_id);
-CREATE INDEX idx_manufacturers_name ON manufacturers(name);
+CREATE INDEX idx_sources_organization_id ON sources(organization_id);
+CREATE INDEX idx_sources_name ON sources(name);
 
 CREATE INDEX idx_designers_organization_id ON designers(organization_id);
 CREATE INDEX idx_designers_name ON designers(name);
@@ -68,13 +68,13 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_manufacturers_updated_at BEFORE UPDATE ON manufacturers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_sources_updated_at BEFORE UPDATE ON sources FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_designers_updated_at BEFORE UPDATE ON designers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON drivers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Verify the tables were created correctly
-SELECT 'New manufacturers columns:' as info;
-SELECT column_name FROM information_schema.columns WHERE table_name = 'manufacturers' ORDER BY column_name;
+SELECT 'New sources columns:' as info;
+SELECT column_name FROM information_schema.columns WHERE table_name = 'sources' ORDER BY column_name;
 
 SELECT 'New designers columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'designers' ORDER BY column_name;

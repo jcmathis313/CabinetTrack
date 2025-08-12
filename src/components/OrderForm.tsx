@@ -12,7 +12,7 @@ interface OrderFormProps {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) => {
-  const { addOrder, updateOrder, designers, manufacturers } = useOrder();
+  const { addOrder, updateOrder, designers, Sources } = useOrder();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     jobName: '',
@@ -21,7 +21,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
     purchaseOrder: '',
     designerId: '',
     cost: '',
-    manufacturerId: '',
+    sourceId: '',
     destinationName: '',
     status: OrderStatus.PENDING,
     priority: OrderPriority.STANDARD
@@ -36,7 +36,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
         purchaseOrder: order.purchaseOrder,
         designerId: order.designerId,
         cost: order.cost.toString(),
-        manufacturerId: order.manufacturerId,
+        sourceId: order.SourceId,
         destinationName: order.destinationName,
         status: order.status,
         priority: order.priority
@@ -50,7 +50,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
         purchaseOrder: '',
         designerId: '',
         cost: '',
-        manufacturerId: '',
+        sourceId: '',
         destinationName: '',
         status: OrderStatus.PENDING,
         priority: OrderPriority.STANDARD
@@ -84,7 +84,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
           purchaseOrder: formData.purchaseOrder,
           designerId: formData.designerId,
           cost: parseFloat(formData.cost),
-          manufacturerId: formData.manufacturerId,
+          sourceId: formData.SourceId,
           destinationName: formData.destinationName,
           status: formData.status,
           priority: formData.priority
@@ -223,19 +223,19 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Manufacturer *
+                Source *
               </label>
               <select
-                name="manufacturerId"
-                value={formData.manufacturerId}
+                name="SourceId"
+                value={formData.SourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
-                <option value="">Select manufacturer</option>
-                {manufacturers.map(manufacturer => (
-                  <option key={manufacturer.id} value={manufacturer.id}>
-                    {manufacturer.name}
+                <option value="">Select Source</option>
+                {sources.map(Source => (
+                  <option key={source.id} value={source.id}>
+                    {source.name}
                   </option>
                 ))}
               </select>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Calendar, Clock, MapPin, User, Building, DollarSign, FileText, Truck, Download } from 'lucide-react';
-import { Order, OrderStatus, OrderPriority, Manufacturer, Designer, Pickup } from '../types';
+import { Order, OrderStatus, OrderPriority, Source, Designer, Pickup } from '../types';
 import { useOrder } from '../contexts/OrderContext';
 import jsPDF from 'jspdf';
 
@@ -18,13 +18,13 @@ interface OrderNote {
 }
 
 const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, onClose }) => {
-  const { manufacturers, designers, pickups } = useOrder();
+  const { Sources, designers, pickups } = useOrder();
   const [notes, setNotes] = useState<OrderNote[]>([]);
   const [newNote, setNewNote] = useState('');
   const [isAddingNote, setIsAddingNote] = useState(false);
 
   // Get related entities
-  const manufacturer = order ? manufacturers.find(m => m.id === order.manufacturerId) : null;
+  const Source = order ? sources.find(m => m.id === order.SourceId) : null;
   const designer = order ? designers.find(d => d.id === order.designerId) : null;
   const pickup = order?.pickupId ? pickups.find(p => p.id === order.pickupId) : null;
 
@@ -177,20 +177,20 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
       yPosition += 5;
     }
 
-    // Manufacturer
-    if (manufacturer) {
+    // Source
+    if (Source) {
       if (yPosition > pageHeight - 60) {
         doc.addPage();
         yPosition = 20;
       }
-      doc.text(`Manufacturer: ${manufacturer.name}`, 20, yPosition);
+      doc.text(`Source: ${source.name}`, 20, yPosition);
       yPosition += 7;
-      if (manufacturer.address) {
-        doc.text(`Address: ${manufacturer.address}`, 20, yPosition);
+      if (source.address) {
+        doc.text(`Address: ${source.address}`, 20, yPosition);
         yPosition += 7;
       }
-      if (manufacturer.phoneNumber) {
-        doc.text(`Phone: ${manufacturer.phoneNumber}`, 20, yPosition);
+      if (source.phoneNumber) {
+        doc.text(`Phone: ${source.phoneNumber}`, 20, yPosition);
         yPosition += 7;
       }
       yPosition += 5;
@@ -367,12 +367,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                   <div>
                     <div className="flex items-center text-gray-600 mb-1">
                       <Building className="h-4 w-4 mr-2" />
-                      <span className="text-sm">Manufacturer</span>
+                      <span className="text-sm">Source</span>
                     </div>
                     <div className="ml-6">
-                      <p className="font-medium text-sm">{manufacturer?.name || 'Unknown'}</p>
-                      <p className="text-xs text-gray-500">{manufacturer?.address || 'No address'}</p>
-                      <p className="text-xs text-gray-500">{manufacturer?.phoneNumber || 'No phone'}</p>
+                      <p className="font-medium text-sm">{Source?.name || 'Unknown'}</p>
+                      <p className="text-xs text-gray-500">{Source?.address || 'No address'}</p>
+                      <p className="text-xs text-gray-500">{Source?.phoneNumber || 'No phone'}</p>
                     </div>
                   </div>
 

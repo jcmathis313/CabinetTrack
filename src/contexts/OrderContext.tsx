@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Order, Pickup, Manufacturer, Designer, Driver, OrganizationalSettings } from '../types';
+import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings } from '../types';
 import { SupabaseService } from '../services/supabaseService';
 import { SubscriptionService } from '../services/subscriptionService';
 import { isSupabaseConfigured } from '../config/supabase';
@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from '../config/supabase';
 interface OrderState {
   orders: Order[];
   pickups: Pickup[];
-  manufacturers: Manufacturer[];
+  sources: Source[];
   designers: Designer[];
   drivers: Driver[];
   organizationalSettings: OrganizationalSettings;
@@ -26,10 +26,10 @@ type OrderAction =
   | { type: 'ADD_PICKUP'; payload: Pickup }
   | { type: 'UPDATE_PICKUP'; payload: Pickup }
   | { type: 'DELETE_PICKUP'; payload: string }
-  | { type: 'SET_MANUFACTURERS'; payload: Manufacturer[] }
-  | { type: 'ADD_MANUFACTURER'; payload: Manufacturer }
-  | { type: 'UPDATE_MANUFACTURER'; payload: Manufacturer }
-  | { type: 'DELETE_MANUFACTURER'; payload: string }
+  | { type: 'SET_SOURCES'; payload: Source[] }
+  | { type: 'ADD_SOURCE'; payload: Source }
+  | { type: 'UPDATE_SOURCE'; payload: Source }
+  | { type: 'DELETE_SOURCE'; payload: string }
   | { type: 'SET_DESIGNERS'; payload: Designer[] }
   | { type: 'ADD_DESIGNER'; payload: Designer }
   | { type: 'UPDATE_DESIGNER'; payload: Designer }
@@ -43,7 +43,7 @@ type OrderAction =
 const initialState: OrderState = {
   orders: [],
   pickups: [],
-  manufacturers: [],
+  sources: [],
   designers: [],
   drivers: [],
   organizationalSettings: {
@@ -81,14 +81,14 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { ...state, pickups: state.pickups.map(pickup => pickup.id === action.payload.id ? action.payload : pickup) };
     case 'DELETE_PICKUP':
       return { ...state, pickups: state.pickups.filter(pickup => pickup.id !== action.payload) };
-    case 'SET_MANUFACTURERS':
-      return { ...state, manufacturers: action.payload };
-    case 'ADD_MANUFACTURER':
-      return { ...state, manufacturers: [action.payload, ...state.manufacturers] };
-    case 'UPDATE_MANUFACTURER':
-      return { ...state, manufacturers: state.manufacturers.map(manufacturer => manufacturer.id === action.payload.id ? action.payload : manufacturer) };
-    case 'DELETE_MANUFACTURER':
-      return { ...state, manufacturers: state.manufacturers.filter(manufacturer => manufacturer.id !== action.payload) };
+    case 'SET_SOURCES':
+      return { ...state, sources: action.payload };
+    case 'ADD_SOURCE':
+      return { ...state, sources: [action.payload, ...state.sources] };
+    case 'UPDATE_SOURCE':
+      return { ...state, sources: state.sources.map(source => source.id === action.payload.id ? action.payload : source) };
+    case 'DELETE_SOURCE':
+      return { ...state, sources: state.sources.filter(source => source.id !== action.payload) };
     case 'SET_DESIGNERS':
       return { ...state, designers: action.payload };
     case 'ADD_DESIGNER':
@@ -119,9 +119,9 @@ interface OrderContextType extends OrderState {
   addPickup: (pickup: Omit<Pickup, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Pickup | null>;
   updatePickup: (id: string, updates: Partial<Pickup>) => Promise<Pickup | null>;
   deletePickup: (id: string) => Promise<boolean>;
-  addManufacturer: (manufacturer: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Manufacturer | null>;
-  updateManufacturer: (id: string, updates: Partial<Manufacturer>) => Promise<Manufacturer | null>;
-  deleteManufacturer: (id: string) => Promise<boolean>;
+  addSource: (Source: Omit<Source, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Source | null>;
+  updateSource: (id: string, updates: Partial<Source>) => Promise<Source | null>;
+  deleteSource: (id: string) => Promise<boolean>;
   addDesigner: (designer: Omit<Designer, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Designer | null>;
   updateDesigner: (id: string, updates: Partial<Designer>) => Promise<Designer | null>;
   deleteDesigner: (id: string) => Promise<boolean>;
@@ -162,7 +162,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
               purchaseOrder: 'PO-001',
               designerId: 'mock-designer-1',
               cost: 5000,
-              manufacturerId: 'mock-manufacturer-1',
+              sourceId: 'mock-Source-1',
               destinationName: 'Main House',
               status: 'pending' as any,
               priority: 'high' as any,
@@ -187,9 +187,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
             }
           ];
 
-          const mockManufacturers: Manufacturer[] = [
+          const mockSources: Source[] = [
             {
-              id: 'mock-manufacturer-1',
+              id: 'mock-Source-1',
               organizationId: 'mock-org-id',
               name: 'Sample Cabinet Co.',
               address: '456 Factory St, Industry City, USA',
@@ -237,16 +237,16 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
           dispatch({ type: 'SET_ORDERS', payload: mockOrders });
           dispatch({ type: 'SET_PICKUPS', payload: mockPickups });
-          dispatch({ type: 'SET_MANUFACTURERS', payload: mockManufacturers });
+          dispatch({ type: 'SET_SOURCES', payload: mockSources });
           dispatch({ type: 'SET_DESIGNERS', payload: mockDesigners });
           dispatch({ type: 'SET_DRIVERS', payload: mockDrivers });
           dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: mockOrgSettings });
         } else {
           console.log('OrderContext: Loading data from Supabase...');
-          const [orders, pickups, manufacturers, designers, drivers, orgSettings] = await Promise.all([
+          const [orders, pickups, Sources, designers, drivers, orgSettings] = await Promise.all([
             SupabaseService.getOrders(),
             SupabaseService.getPickups(),
-            SupabaseService.getManufacturers(),
+            SupabaseService.getSources(),
             SupabaseService.getDesigners(),
             SupabaseService.getDrivers(),
             SupabaseService.getOrganizationalSettings()
@@ -255,14 +255,14 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           console.log('OrderContext: Data loaded from Supabase:', {
             orders: orders.length,
             pickups: pickups.length,
-            manufacturers: manufacturers.length,
+            sources: sources.length,
             designers: designers.length,
             drivers: drivers.length
           });
 
           dispatch({ type: 'SET_ORDERS', payload: orders });
           dispatch({ type: 'SET_PICKUPS', payload: pickups });
-          dispatch({ type: 'SET_MANUFACTURERS', payload: manufacturers });
+          dispatch({ type: 'SET_SOURCES', payload: Sources });
           dispatch({ type: 'SET_DESIGNERS', payload: designers });
           dispatch({ type: 'SET_DRIVERS', payload: drivers });
           dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: orgSettings });
@@ -399,47 +399,47 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
-  const addManufacturer = async (manufacturer: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Manufacturer | null> => {
+  const addSource = async (Source: Omit<Source, 'id' | 'createdAt' | 'updatedAt'>): Promise<Source | null> => {
     try {
-      const result = await SupabaseService.saveManufacturer(manufacturer);
+      const result = await SupabaseService.saveSource(Source);
       if (result) {
-        dispatch({ type: 'ADD_MANUFACTURER', payload: result });
+        dispatch({ type: 'ADD_SOURCE', payload: result });
         dispatch({ type: 'SET_ERROR', payload: null });
       }
       return result;
     } catch (error) {
-      console.error('Error adding manufacturer:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to add manufacturer' });
+      console.error('Error adding Source:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add Source' });
       return null;
     }
   };
 
-  const updateManufacturer = async (id: string, updates: Partial<Manufacturer>): Promise<Manufacturer | null> => {
+  const updateSource = async (id: string, updates: Partial<Source>): Promise<Source | null> => {
     try {
-      const result = await SupabaseService.updateManufacturer(id, updates);
+      const result = await SupabaseService.updateSource(id, updates);
       if (result) {
-        dispatch({ type: 'UPDATE_MANUFACTURER', payload: result });
+        dispatch({ type: 'UPDATE_SOURCE', payload: result });
         dispatch({ type: 'SET_ERROR', payload: null });
       }
       return result;
     } catch (error) {
-      console.error('Error updating manufacturer:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to update manufacturer' });
+      console.error('Error updating Source:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update Source' });
       return null;
     }
   };
 
-  const deleteManufacturer = async (id: string): Promise<boolean> => {
+  const deleteSource = async (id: string): Promise<boolean> => {
     try {
-      const success = await SupabaseService.deleteManufacturer(id);
+      const success = await SupabaseService.deleteSource(id);
       if (success) {
-        dispatch({ type: 'DELETE_MANUFACTURER', payload: id });
+        dispatch({ type: 'DELETE_SOURCE', payload: id });
         dispatch({ type: 'SET_ERROR', payload: null });
       }
       return success;
     } catch (error) {
-      console.error('Error deleting manufacturer:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete manufacturer' });
+      console.error('Error deleting Source:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete Source' });
       return false;
     }
   };
@@ -556,10 +556,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       try {
         console.log('OrderContext: Loading data...');
-        const [orders, pickups, manufacturers, designers, drivers, orgSettings] = await Promise.all([
+        const [orders, pickups, Sources, designers, drivers, orgSettings] = await Promise.all([
           SupabaseService.getOrders(),
           SupabaseService.getPickups(),
-          SupabaseService.getManufacturers(),
+          SupabaseService.getSources(),
           SupabaseService.getDesigners(),
           SupabaseService.getDrivers(),
           SupabaseService.getOrganizationalSettings()
@@ -569,7 +569,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         
         dispatch({ type: 'SET_ORDERS', payload: orders });
         dispatch({ type: 'SET_PICKUPS', payload: pickups });
-        dispatch({ type: 'SET_MANUFACTURERS', payload: manufacturers });
+        dispatch({ type: 'SET_SOURCES', payload: Sources });
         dispatch({ type: 'SET_DESIGNERS', payload: designers });
         dispatch({ type: 'SET_DRIVERS', payload: drivers });
         dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: orgSettings });
@@ -592,9 +592,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     addPickup,
     updatePickup,
     deletePickup,
-    addManufacturer,
-    updateManufacturer,
-    deleteManufacturer,
+    addSource,
+    updateSource,
+    deleteSource,
     addDesigner,
     updateDesigner,
     deleteDesigner,

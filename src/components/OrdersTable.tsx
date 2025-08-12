@@ -28,7 +28,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   pickupFilter, 
   setPickupFilter 
 }) => {
-  const { deleteOrder, manufacturers, designers, pickups } = useOrder();
+  const { deleteOrder, Sources, designers, pickups } = useOrder();
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -72,10 +72,10 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
 
 
 
-  const getEntityName = (id: string, entityType: 'manufacturer' | 'designer') => {
+  const getEntityName = (id: string, entityType: 'Source' | 'designer') => {
     switch (entityType) {
-      case 'manufacturer':
-        return manufacturers.find(m => m.id === id)?.name || 'Unknown';
+      case 'Source':
+        return sources.find(m => m.id === id)?.name || 'Unknown';
       case 'designer':
         return designers.find(d => d.id === id)?.name || 'Unknown';
       default:
@@ -95,7 +95,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
     { key: 'orderNumber' as SortField, label: 'Order Number', sortable: true },
     { key: 'purchaseOrder' as SortField, label: 'Purchase Order', sortable: true },
     { key: 'priority' as SortField, label: 'Priority', sortable: true },
-    { key: 'manufacturerId' as SortField, label: 'Manufacturer', sortable: false },
+    { key: 'SourceId' as SortField, label: 'Source', sortable: false },
     { key: 'status' as SortField, label: 'Status', sortable: true },
     { key: 'pickupId' as SortField, label: 'Pickup', sortable: false },
     { key: 'actions' as SortField, label: 'Actions', sortable: false },
@@ -226,7 +226,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                 <StatusBadge type="priority" value={order.priority} size="sm" />
               </td>
               <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {getEntityName(order.manufacturerId, 'manufacturer')}
+                {getEntityName(order.SourceId, 'Source')}
               </td>
               <td className="px-4 py-2 whitespace-nowrap">
                 <StatusBadge type="status" value={order.status} size="sm" />

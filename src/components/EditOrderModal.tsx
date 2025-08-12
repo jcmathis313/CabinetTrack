@@ -10,7 +10,7 @@ interface EditOrderModalProps {
 }
 
 const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose }) => {
-  const { manufacturers, designers } = useOrder();
+  const { Sources, designers } = useOrder();
   const [formData, setFormData] = useState({
     jobName: '',
     jobNumber: '',
@@ -18,7 +18,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose 
     purchaseOrder: '',
     designerId: '',
     cost: '',
-    manufacturerId: '',
+    sourceId: '',
     destinationName: '',
     status: OrderStatus.PENDING,
           priority: OrderPriority.STANDARD
@@ -33,7 +33,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose 
         purchaseOrder: order.purchaseOrder,
         designerId: order.designerId,
         cost: order.cost.toString(),
-        manufacturerId: order.manufacturerId,
+        sourceId: order.SourceId,
         destinationName: order.destinationName,
         status: order.status,
         priority: order.priority
@@ -195,19 +195,19 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Manufacturer *
+                Source *
               </label>
               <select
-                name="manufacturerId"
-                value={formData.manufacturerId}
+                name="SourceId"
+                value={formData.SourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
-                <option value="">Select a manufacturer</option>
-                {manufacturers.map(manufacturer => (
-                  <option key={manufacturer.id} value={manufacturer.id}>
-                    {manufacturer.name}
+                <option value="">Select a Source</option>
+                {sources.map(Source => (
+                  <option key={source.id} value={source.id}>
+                    {source.name}
                   </option>
                 ))}
               </select>

@@ -7,7 +7,7 @@ export class MigrationService {
     migratedCounts: {
       orders: number
       pickups: number
-      manufacturers: number
+      sources: number
       designers: number
       drivers: number
     }
@@ -20,7 +20,7 @@ export class MigrationService {
       migratedCounts: {
         orders: 0,
         pickups: 0,
-        manufacturers: 0,
+        sources: 0,
         designers: 0,
         drivers: 0
       }
@@ -35,7 +35,7 @@ export class MigrationService {
   static getLocalStorageDataCounts(): {
     orders: number
     pickups: number
-    manufacturers: number
+    sources: number
     designers: number
     drivers: number
   } {
@@ -43,7 +43,7 @@ export class MigrationService {
     return {
       orders: 0,
       pickups: 0,
-      manufacturers: 0,
+      sources: 0,
       designers: 0,
       drivers: 0
     }

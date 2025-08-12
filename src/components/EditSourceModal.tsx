@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useOrder } from '../contexts/OrderContext';
-import { useAuth } from '../contexts/AuthContext';
+import { Source } from '../types';
 
-
-interface CreateManufacturerModalProps {
+interface EditSourceModalProps {
+  source: Source;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpen, onClose }) => {
-  const { addManufacturer } = useOrder();
-  const { user } = useAuth();
+const EditSourceModal: React.FC<EditSourceModalProps> = ({ source, isOpen, onClose }) => {
+  const { updateSource } = useOrder();
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -20,26 +19,28 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (source) {
+      setFormData({
+        name: source.name,
+        address: source.address,
+        phoneNumber: source.phoneNumber,
+        mainContact: source.mainContact
+      });
+    }
+  }, [source]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      const result = await addManufacturer({
-        ...formData,
-        organizationId: user?.organizationId || ''
-      });
+      const result = await updateSource(source.id, formData);
       if (result) {
         onClose();
-        setFormData({
-          name: '',
-          address: '',
-          phoneNumber: '',
-          mainContact: ''
-        });
       }
     } catch (error) {
-      console.error('Error creating manufacturer:', error);
+      console.error('Error updating Source:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +57,7 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Add Manufacturer</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Edit Source</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -68,7 +69,7 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Manufacturer Name *
+              Source Name *
             </label>
             <input
               type="text"
@@ -77,7 +78,7 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
               onChange={handleChange}
               required
               className="input"
-              placeholder="Enter manufacturer name"
+              placeholder="Enter Source name"
             />
           </div>
 
@@ -139,7 +140,7 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
               className="btn-primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Adding...' : 'Add Manufacturer'}
+              {isSubmitting ? 'Updating...' : 'Update Source'}
             </button>
           </div>
         </form>
@@ -148,4 +149,4 @@ const CreateManufacturerModal: React.FC<CreateManufacturerModalProps> = ({ isOpe
   );
 };
 
-export default CreateManufacturerModal;
+export default EditSourceModal;

@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useOrder } from '../contexts/OrderContext';
-import { Manufacturer } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
-interface EditManufacturerModalProps {
-  manufacturer: Manufacturer;
+
+interface CreateSourceModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufacturer, isOpen, onClose }) => {
-  const { updateManufacturer } = useOrder();
+const CreateSourceModal: React.FC<CreateSourceModalProps> = ({ isOpen, onClose }) => {
+  const { addSource } = useOrder();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -19,28 +20,26 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (manufacturer) {
-      setFormData({
-        name: manufacturer.name,
-        address: manufacturer.address,
-        phoneNumber: manufacturer.phoneNumber,
-        mainContact: manufacturer.mainContact
-      });
-    }
-  }, [manufacturer]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      const result = await updateManufacturer(manufacturer.id, formData);
+      const result = await addSource({
+        ...formData,
+        organizationId: user?.organizationId || ''
+      });
       if (result) {
         onClose();
+        setFormData({
+          name: '',
+          address: '',
+          phoneNumber: '',
+          mainContact: ''
+        });
       }
     } catch (error) {
-      console.error('Error updating manufacturer:', error);
+      console.error('Error creating Source:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -57,7 +56,7 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Manufacturer</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Add Source</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -69,7 +68,7 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Manufacturer Name *
+              Source Name *
             </label>
             <input
               type="text"
@@ -78,7 +77,7 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
               onChange={handleChange}
               required
               className="input"
-              placeholder="Enter manufacturer name"
+              placeholder="Enter Source name"
             />
           </div>
 
@@ -140,7 +139,7 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
               className="btn-primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Updating...' : 'Update Manufacturer'}
+              {isSubmitting ? 'Adding...' : 'Add Source'}
             </button>
           </div>
         </form>
@@ -149,4 +148,4 @@ const EditManufacturerModal: React.FC<EditManufacturerModalProps> = ({ manufactu
   );
 };
 
-export default EditManufacturerModal;
+export default CreateSourceModal;

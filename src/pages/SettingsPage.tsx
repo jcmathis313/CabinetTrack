@@ -1,33 +1,33 @@
 import { useState } from 'react';
 import { Plus, Edit, Trash2, Building, User, Truck } from 'lucide-react';
 import { useOrder } from '../contexts/OrderContext';
-import { Manufacturer, Designer, Driver } from '../types';
-import CreateManufacturerModal from '../components/CreateManufacturerModal';
+import { Source, Designer, Driver } from '../types';
+import CreateSourceModal from '../components/CreateSourceModal';
 import CreateDesignerModal from '../components/CreateDesignerModal';
 import CreateDriverModal from '../components/CreateDriverModal';
-import EditManufacturerModal from '../components/EditManufacturerModal';
+import EditSourceModal from '../components/EditSourceModal';
 import EditDesignerModal from '../components/EditDesignerModal';
 import EditDriverModal from '../components/EditDriverModal';
 import OrganizationalSettingsTab from '../components/OrganizationalSettingsTab';
 
-type TabType = 'manufacturers' | 'designers' | 'drivers' | 'organizational';
+type TabType = 'Sources' | 'designers' | 'drivers' | 'organizational';
 
 const SettingsPage = () => {
-  const { deleteManufacturer, deleteDesigner, deleteDriver, manufacturers, designers, drivers } = useOrder();
-  const [activeTab, setActiveTab] = useState<TabType>('manufacturers');
-  const [showCreateManufacturer, setShowCreateManufacturer] = useState(false);
+  const { deleteSource, deleteDesigner, deleteDriver, Sources, designers, drivers } = useOrder();
+  const [activeTab, setActiveTab] = useState<TabType>('Sources');
+  const [showCreateSource, setShowCreateSource] = useState(false);
   const [showCreateDesigner, setShowCreateDesigner] = useState(false);
   const [showCreateDriver, setShowCreateDriver] = useState(false);
-  const [editingManufacturer, setEditingManufacturer] = useState<any>(null);
+  const [editingSource, setEditingSource] = useState<any>(null);
   const [editingDesigner, setEditingDesigner] = useState<any>(null);
   const [editingDriver, setEditingDriver] = useState<any>(null);
 
-  const handleDelete = async (type: 'manufacturer' | 'designer' | 'driver', id: string) => {
+  const handleDelete = async (type: 'Source' | 'designer' | 'driver', id: string) => {
     if (confirm(`Are you sure you want to delete this ${type}?`)) {
       try {
         switch (type) {
-          case 'manufacturer':
-            await deleteManufacturer(id);
+          case 'Source':
+            await deleteSource(id);
             break;
           case 'designer':
             await deleteDesigner(id);
@@ -44,7 +44,7 @@ const SettingsPage = () => {
   };
 
   const tabs = [
-    { id: 'manufacturers' as TabType, label: 'Manufacturers', icon: Building },
+    { id: 'Sources' as TabType, label: 'Sources', icon: Building },
     { id: 'designers' as TabType, label: 'Designers', icon: User },
     { id: 'drivers' as TabType, label: 'Drivers', icon: Truck },
     { id: 'organizational' as TabType, label: 'Organizational Settings', icon: Building }
@@ -52,37 +52,37 @@ const SettingsPage = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'manufacturers':
+      case 'Sources':
         return (
           <div className="space-y-6">
-            {/* Manufacturers content */}
+            {/* Sources content */}
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Manufacturers</h3>
+              <h3 className="text-lg font-medium text-gray-900">Sources</h3>
               <button
-                onClick={() => setShowCreateManufacturer(true)}
+                onClick={() => setShowCreateSource(true)}
                 className="btn-primary flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>Add Manufacturer</span>
+                <span>Add Source</span>
               </button>
             </div>
-            {manufacturers.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No manufacturers added yet.</p>
+            {sources.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No Sources added yet.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {manufacturers.map(manufacturer => (
-                  <div key={manufacturer.id} className="border border-gray-200 rounded-lg p-4">
+                {sources.map(Source => (
+                  <div key={source.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-medium text-gray-900">{manufacturer.name}</h3>
+                      <h3 className="font-medium text-gray-900">{source.name}</h3>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => setEditingManufacturer(manufacturer)}
+                          onClick={() => setEditingSource(Source)}
                           className="text-primary-600 hover:text-primary-800"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete('manufacturer', manufacturer.id)}
+                          onClick={() => handleDelete('Source', source.id)}
                           className="text-red-600 hover:text-red-800"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -90,9 +90,9 @@ const SettingsPage = () => {
                       </div>
                     </div>
                     <div className="space-y-1 text-sm text-gray-600">
-                      <p>{manufacturer.address}</p>
-                      <p>{manufacturer.phoneNumber}</p>
-                      <p>Contact: {manufacturer.mainContact}</p>
+                      <p>{source.address}</p>
+                      <p>{source.phoneNumber}</p>
+                      <p>Contact: {source.mainContact}</p>
                     </div>
                   </div>
                 ))}
@@ -242,9 +242,9 @@ const SettingsPage = () => {
       </div>
 
       {/* Modals */}
-      <CreateManufacturerModal
-        isOpen={showCreateManufacturer}
-        onClose={() => setShowCreateManufacturer(false)}
+      <CreateSourceModal
+        isOpen={showCreateSource}
+        onClose={() => setShowCreateSource(false)}
       />
       <CreateDesignerModal
         isOpen={showCreateDesigner}
@@ -254,10 +254,10 @@ const SettingsPage = () => {
         isOpen={showCreateDriver}
         onClose={() => setShowCreateDriver(false)}
       />
-      <EditManufacturerModal
-        manufacturer={editingManufacturer as Manufacturer}
-        isOpen={!!editingManufacturer}
-        onClose={() => setEditingManufacturer(null)}
+      <EditSourceModal
+        Source={editingSource as Source}
+        isOpen={!!editingSource}
+        onClose={() => setEditingSource(null)}
       />
       <EditDesignerModal
         designer={editingDesigner as Designer}

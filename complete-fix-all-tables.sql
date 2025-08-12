@@ -21,10 +21,10 @@ ALTER TABLE organizations ADD COLUMN IF NOT EXISTS current_period_end TIMESTAMP 
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS cancel_at_period_end BOOLEAN DEFAULT false;
 ALTER TABLE organizations ADD COLUMN IF NOT EXISTS trial_end TIMESTAMP WITH TIME ZONE;
 
--- Add missing columns to manufacturers table
-ALTER TABLE manufacturers ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
-ALTER TABLE manufacturers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
-ALTER TABLE manufacturers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+-- Add missing columns to sources table
+ALTER TABLE sources ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE sources ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE sources ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 
 -- Add missing columns to designers table
 ALTER TABLE designers ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
@@ -55,7 +55,7 @@ ALTER TABLE organizational_settings ADD COLUMN IF NOT EXISTS is_active BOOLEAN D
 ALTER TABLE organizations DISABLE ROW LEVEL SECURITY;
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE organizational_settings DISABLE ROW LEVEL SECURITY;
-ALTER TABLE manufacturers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE sources DISABLE ROW LEVEL SECURITY;
 ALTER TABLE designers DISABLE ROW LEVEL SECURITY;
 ALTER TABLE drivers DISABLE ROW LEVEL SECURITY;
 ALTER TABLE orders DISABLE ROW LEVEL SECURITY;
@@ -69,7 +69,7 @@ SELECT 'Organizations table columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'organizations' ORDER BY column_name;
 
 SELECT 'Manufacturers table columns:' as info;
-SELECT column_name FROM information_schema.columns WHERE table_name = 'manufacturers' ORDER BY column_name;
+SELECT column_name FROM information_schema.columns WHERE table_name = 'sources' ORDER BY column_name;
 
 SELECT 'Designers table columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'designers' ORDER BY column_name;

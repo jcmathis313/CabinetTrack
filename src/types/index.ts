@@ -25,7 +25,7 @@ export interface SubscriptionPlan {
     maxUsers: number;
     maxOrders: number;
     maxPickups: number;
-    maxManufacturers: number;
+    maxSources: number;
     maxDesigners: number;
     maxDrivers: number;
     advancedReporting: boolean;
@@ -110,7 +110,7 @@ export interface Order {
   purchaseOrder: string;
   designerId: string;
   cost: number;
-  manufacturerId: string;
+  sourceId: string;
   destinationName: string;
   status: OrderStatus;
   priority: OrderPriority;
@@ -132,7 +132,7 @@ export interface Pickup {
   updatedAt: Date;
 }
 
-export interface Manufacturer {
+export interface Source {
   id: string;
   organizationId: string;
   name: string;

@@ -48,7 +48,7 @@ export class SupabaseService {
         purchaseOrder: order.purchase_order,
         designerId: order.designer_id,
         cost: order.cost,
-        manufacturerId: order.manufacturer_id,
+        sourceId: order.manufacturer_id,
         destinationName: order.destination_name,
         status: order.status,
         priority: order.priority,
@@ -112,7 +112,7 @@ export class SupabaseService {
         orderNumber: data.order_number,
         purchaseOrder: data.purchase_order,
         designerId: data.designer_id,
-        manufacturerId: data.manufacturer_id,
+        sourceId: data.manufacturer_id,
         destinationName: data.destination_name,
         pickupId: data.pickup_id,
         createdAt: new Date(data.created_at),
@@ -162,7 +162,7 @@ export class SupabaseService {
         orderNumber: data.order_number,
         purchaseOrder: data.purchase_order,
         designerId: data.designer_id,
-        manufacturerId: data.manufacturer_id,
+        sourceId: data.manufacturer_id,
         destinationName: data.destination_name,
         pickupId: data.pickup_id,
         createdAt: new Date(data.created_at),
@@ -333,13 +333,13 @@ export class SupabaseService {
   }
 
   // Manufacturers
-  static async getManufacturers(): Promise<Manufacturer[]> {
+  static async getSources(): Promise<Source[]> {
     try {
       const organizationId = await this.getCurrentOrganizationId()
       if (!organizationId) return []
 
       const { data, error } = await supabase
-        .from('manufacturers')
+        .from('sources')
         .select('*')
         .eq('organization_id', organizationId)
         .order('name', { ascending: true })
@@ -347,22 +347,22 @@ export class SupabaseService {
       if (error) throw error
 
       return data?.map(manufacturer => ({
-        id: manufacturer.id,
-        organizationId: manufacturer.organization_id,
-        name: manufacturer.name,
-        address: manufacturer.address,
-        phoneNumber: manufacturer.phone_number,
-        mainContact: manufacturer.main_contact,
-        createdAt: new Date(manufacturer.created_at),
-        updatedAt: new Date(manufacturer.updated_at)
+        id: source.id,
+        organizationId: source.organization_id,
+        name: source.name,
+        address: source.address,
+        phoneNumber: source.phone_number,
+        mainContact: source.main_contact,
+        createdAt: new Date(source.created_at),
+        updatedAt: new Date(source.updated_at)
       })) || []
     } catch (error) {
-      console.error('Error loading manufacturers:', error)
+      console.error('Error loading sources:', error)
       return []
     }
   }
 
-  static async saveManufacturer(manufacturer: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Manufacturer | null> {
+  static async saveSource(manufacturer: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Manufacturer | null> {
     try {
       console.log('SupabaseService: Attempting to save manufacturer:', manufacturer)
       const organizationId = await this.getCurrentOrganizationId()
@@ -376,17 +376,17 @@ export class SupabaseService {
       // Map camelCase fields to snake_case for database
       const dbManufacturer = {
         organization_id: organizationId,
-        name: manufacturer.name,
-        address: manufacturer.address,
-        phone_number: manufacturer.phoneNumber,
-        main_contact: manufacturer.mainContact,
+        name: source.name,
+        address: source.address,
+        phone_number: source.phoneNumber,
+        main_contact: source.mainContact,
         created_at: now,
         updated_at: now
       }
       
       console.log('SupabaseService: Inserting manufacturer data:', dbManufacturer)
       const { data, error } = await supabase
-        .from('manufacturers')
+        .from('sources')
         .insert([dbManufacturer])
         .select()
         .single()
@@ -396,7 +396,7 @@ export class SupabaseService {
         throw error
       }
 
-      console.log('SupabaseService: Manufacturer saved successfully:', data)
+      console.log('SupabaseService: Source saved successfully:', data)
       return data ? {
         ...data,
         organizationId: data.organization_id,
@@ -411,7 +411,7 @@ export class SupabaseService {
     }
   }
 
-  static async updateManufacturer(id: string, updates: Partial<Manufacturer>): Promise<Manufacturer | null> {
+  static async updateSource(id: string, updates: Partial<Manufacturer>): Promise<Manufacturer | null> {
     try {
       const organizationId = await this.getCurrentOrganizationId()
       if (!organizationId) return null
@@ -425,7 +425,7 @@ export class SupabaseService {
       if (updates.mainContact !== undefined) dbUpdates.main_contact = updates.mainContact
       
       const { data, error } = await supabase
-        .from('manufacturers')
+        .from('sources')
         .update(dbUpdates)
         .eq('id', id)
         .eq('organization_id', organizationId)
@@ -448,13 +448,13 @@ export class SupabaseService {
     }
   }
 
-  static async deleteManufacturer(id: string): Promise<boolean> {
+  static async deleteSource(id: string): Promise<boolean> {
     try {
       const organizationId = await this.getCurrentOrganizationId()
       if (!organizationId) return false
 
       const { error } = await supabase
-        .from('manufacturers')
+        .from('sources')
         .delete()
         .eq('id', id)
         .eq('organization_id', organizationId)

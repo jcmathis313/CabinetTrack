@@ -44,7 +44,7 @@ export class SubscriptionService {
               maxUsers: 3,
               maxOrders: 50,
               maxPickups: 20,
-              maxManufacturers: 5,
+              maxSources: 5,
               maxDesigners: 5,
               maxDrivers: 3,
               advancedReporting: false,
@@ -64,7 +64,7 @@ export class SubscriptionService {
               maxUsers: 25,
               maxOrders: 1000,
               maxPickups: 500,
-              maxManufacturers: 50,
+              maxSources: 50,
               maxDesigners: 50,
               maxDrivers: 25,
               advancedReporting: true,
@@ -84,7 +84,7 @@ export class SubscriptionService {
               maxUsers: -1,
               maxOrders: -1,
               maxPickups: -1,
-              maxManufacturers: -1,
+              maxSources: -1,
               maxDesigners: -1,
               maxDrivers: -1,
               advancedReporting: true,
@@ -331,7 +331,7 @@ export class SubscriptionService {
           maxUsers: 3,
           maxOrders: 50,
           maxPickups: 20,
-          maxManufacturers: 5,
+          maxSources: 5,
           maxDesigners: 5,
           maxDrivers: 3
         }
@@ -340,7 +340,7 @@ export class SubscriptionService {
           maxUsers: 25,
           maxOrders: 1000,
           maxPickups: 500,
-          maxManufacturers: 50,
+          maxSources: 50,
           maxDesigners: 50,
           maxDrivers: 25
         }
@@ -349,7 +349,7 @@ export class SubscriptionService {
           maxUsers: -1, // Unlimited
           maxOrders: -1, // Unlimited
           maxPickups: -1, // Unlimited
-          maxManufacturers: -1, // Unlimited
+          maxSources: -1, // Unlimited
           maxDesigners: -1, // Unlimited
           maxDrivers: -1 // Unlimited
         }
@@ -358,7 +358,7 @@ export class SubscriptionService {
           maxUsers: 3,
           maxOrders: 50,
           maxPickups: 20,
-          maxManufacturers: 5,
+          maxSources: 5,
           maxDesigners: 5,
           maxDrivers: 3
         }

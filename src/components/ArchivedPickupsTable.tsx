@@ -5,7 +5,7 @@ import { PickupStatus, PickupPriority } from '../types';
 import { PDFService } from '../services/pdfService';
 
 const ArchivedPickupsTable: React.FC = () => {
-  const { pickups, drivers, orders, manufacturers, designers, updatePickup } = useOrder();
+  const { pickups, drivers, orders, Sources, designers, updatePickup } = useOrder();
 
   const archivedPickups = pickups.filter(pickup => pickup.status === PickupStatus.ARCHIVED);
 
@@ -34,7 +34,7 @@ const ArchivedPickupsTable: React.FC = () => {
     const pickupOrders = orders.filter(o => pickup.orders.includes(o.id));
     
     if (driver) {
-      await PDFService.exportPickupPDF(pickup, pickupOrders, manufacturers, designers, driver);
+      await PDFService.exportPickupPDF(pickup, pickupOrders, Sources, designers, driver);
     }
   };
 

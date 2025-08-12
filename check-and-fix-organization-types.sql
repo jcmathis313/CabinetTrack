@@ -16,7 +16,7 @@ WHERE table_name = 'organizations' AND column_name = 'id';
 
 -- Let's recreate the tables with the correct ID type
 -- First, drop the tables that depend on organizations
-DROP TABLE IF EXISTS manufacturers CASCADE;
+DROP TABLE IF EXISTS sources CASCADE;
 DROP TABLE IF EXISTS designers CASCADE;
 DROP TABLE IF EXISTS drivers CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
@@ -31,8 +31,8 @@ SELECT 'Checking organizations table...' as info;
 -- Let's create the tables with the correct foreign key type
 -- We'll use the same type as the organizations table
 
--- Create manufacturers table with correct foreign key type
-CREATE TABLE manufacturers (
+-- Create sources table with correct foreign key type
+CREATE TABLE sources (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization_id BIGINT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE orders (
   purchase_order VARCHAR(100),
   designer_id UUID REFERENCES designers(id) ON DELETE SET NULL,
   cost DECIMAL(10,2) DEFAULT 0.00,
-  manufacturer_id UUID REFERENCES manufacturers(id) ON DELETE SET NULL,
+  source_id UUID REFERENCES sources(id) ON DELETE SET NULL,
   destination_name VARCHAR(255) NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'pending',
   priority VARCHAR(20) NOT NULL DEFAULT 'medium',
@@ -130,8 +130,8 @@ CREATE TABLE orders (
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_manufacturers_organization_id ON manufacturers(organization_id);
-CREATE INDEX idx_manufacturers_name ON manufacturers(name);
+CREATE INDEX idx_sources_organization_id ON sources(organization_id);
+CREATE INDEX idx_sources_name ON sources(name);
 
 CREATE INDEX idx_designers_organization_id ON designers(organization_id);
 CREATE INDEX idx_designers_name ON designers(name);
@@ -155,7 +155,7 @@ CREATE INDEX idx_orders_organization_id ON orders(organization_id);
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_priority ON orders(priority);
 CREATE INDEX idx_orders_designer_id ON orders(designer_id);
-CREATE INDEX idx_orders_manufacturer_id ON orders(manufacturer_id);
+CREATE INDEX idx_orders_source_id ON orders(source_id);
 CREATE INDEX idx_orders_pickup_id ON orders(pickup_id);
 CREATE INDEX idx_orders_created_at ON orders(created_at);
 
@@ -168,7 +168,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_manufacturers_updated_at BEFORE UPDATE ON manufacturers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_sources_updated_at BEFORE UPDATE ON sources FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_designers_updated_at BEFORE UPDATE ON designers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON drivers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -177,8 +177,8 @@ CREATE TRIGGER update_pickups_updated_at BEFORE UPDATE ON pickups FOR EACH ROW E
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Verify the tables were created correctly
-SELECT 'New manufacturers columns:' as info;
-SELECT column_name FROM information_schema.columns WHERE table_name = 'manufacturers' ORDER BY column_name;
+SELECT 'New sources columns:' as info;
+SELECT column_name FROM information_schema.columns WHERE table_name = 'sources' ORDER BY column_name;
 
 SELECT 'New designers columns:' as info;
 SELECT column_name FROM information_schema.columns WHERE table_name = 'designers' ORDER BY column_name;

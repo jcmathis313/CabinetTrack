@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useOrder } from '../contexts/OrderContext';
-import { Manufacturer, Designer, Driver } from '../types';
+import { Source, Designer, Driver } from '../types';
 
-type EntityType = 'manufacturer' | 'designer' | 'driver';
-type Entity = Manufacturer | Designer | Driver;
+type EntityType = 'Source' | 'designer' | 'driver';
+type Entity = Source | Designer | Driver;
 
 interface EntityFormProps {
   entity?: Entity;
@@ -15,7 +15,7 @@ interface EntityFormProps {
 }
 
 const EntityForm: React.FC<EntityFormProps> = ({ entity, entityType, isOpen, onClose, mode }) => {
-  const { addManufacturer, addDesigner, addDriver, updateManufacturer, updateDesigner, updateDriver } = useOrder();
+  const { addSource, addDesigner, addDriver, updateSource, updateDesigner, updateDriver } = useOrder();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -60,8 +60,8 @@ const EntityForm: React.FC<EntityFormProps> = ({ entity, entityType, isOpen, onC
       };
 
       switch (entityType) {
-        case 'manufacturer':
-          await addManufacturer(newEntity as unknown as Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>);
+        case 'Source':
+          await addSource(newEntity as unknown as Omit<Source, 'id' | 'createdAt' | 'updatedAt'>);
           break;
         case 'designer':
           await addDesigner(newEntity as unknown as Omit<Designer, 'id' | 'createdAt' | 'updatedAt'>);
@@ -78,8 +78,8 @@ const EntityForm: React.FC<EntityFormProps> = ({ entity, entityType, isOpen, onC
       };
 
       switch (entityType) {
-        case 'manufacturer':
-          await updateManufacturer(entity.id, updatedEntity as Partial<Manufacturer>);
+        case 'Source':
+          await updateSource(entity.id, updatedEntity as Partial<Source>);
           break;
         case 'designer':
           await updateDesigner(entity.id, updatedEntity as Partial<Designer>);
@@ -108,7 +108,7 @@ const EntityForm: React.FC<EntityFormProps> = ({ entity, entityType, isOpen, onC
 
   const getRequiredFields = () => {
     switch (entityType) {
-      case 'manufacturer':
+      case 'Source':
       case 'designer':
         return ['name', 'phone', 'email'];
       case 'driver':

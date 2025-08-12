@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import { Pickup, Order, Manufacturer, Designer, Driver } from '../types';
 
 export class PDFService {
-  static async exportPickupPDF(pickup: Pickup, orders: Order[], manufacturers: Manufacturer[], designers: Designer[], driver: Driver | undefined) {
+  static async exportPickupPDF(pickup: Pickup, orders: Order[], sources: Source[], designers: Designer[], driver: Driver | undefined) {
     const doc = new jsPDF('landscape');
     
     // Get company settings from localStorage
@@ -15,7 +15,7 @@ export class PDFService {
     this.addPickupInfo(doc, pickup, driver);
     
     // Orders table
-    this.addOrdersTable(doc, orders, manufacturers, designers);
+    this.addOrdersTable(doc, orders, sources, designers);
     
     // Simple footer
     this.addSimpleFooter(doc, organizationalSettings);
@@ -24,7 +24,7 @@ export class PDFService {
     doc.save(`pickup-${pickup.name}-${pickup.scheduledDate.toLocaleDateString()}.pdf`);
   }
 
-  static async exportAllPickupsPDF(pickups: Pickup[], orders: Order[], manufacturers: Manufacturer[], designers: Designer[], drivers: Driver[]) {
+  static async exportAllPickupsPDF(pickups: Pickup[], orders: Order[], sources: Source[], designers: Designer[], drivers: Driver[]) {
     const doc = new jsPDF('landscape');
     
     // Get company settings from localStorage
@@ -56,7 +56,7 @@ export class PDFService {
       }
       
       // Pickup summary
-      this.addPickupSummary(doc, pickup, orders, manufacturers, designers, drivers, yPosition);
+      this.addPickupSummary(doc, pickup, orders, sources, designers, drivers, yPosition);
       yPosition += 35;
     });
     
@@ -142,7 +142,7 @@ export class PDFService {
     }
   }
 
-  private static addOrdersTable(doc: jsPDF, orders: Order[], manufacturers: Manufacturer[], designers: Designer[]) {
+  private static addOrdersTable(doc: jsPDF, orders: Order[], sources: Source[], designers: Designer[]) {
     // Section title
     doc.setFontSize(14);
     doc.text('ORDERS TO PICKUP', 20, 85);
@@ -170,7 +170,7 @@ export class PDFService {
         this.addSimpleHeader(doc, { companyName: 'Company Name' });
       }
       
-      const manufacturer = manufacturers.find(m => m.id === order.manufacturerId);
+      const manufacturer = sources.find(m => m.id === order.manufacturerId);
       
       x = startX;
       doc.setFontSize(8);
@@ -204,7 +204,7 @@ export class PDFService {
     });
   }
 
-  private static addPickupSummary(doc: jsPDF, pickup: Pickup, orders: Order[], manufacturers: Manufacturer[], designers: Designer[], drivers: Driver[], yPosition: number) {
+  private static addPickupSummary(doc: jsPDF, pickup: Pickup, orders: Order[], sources: Source[], designers: Designer[], drivers: Driver[], yPosition: number) {
     // Pickup name
     doc.setFontSize(12);
     doc.text(pickup.name, 20, yPosition);

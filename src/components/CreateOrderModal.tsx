@@ -11,10 +11,10 @@ interface CreateOrderModalProps {
 
 const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) => {
   console.log('CreateOrderModal: Rendering with isOpen:', isOpen);
-  const { addOrder, manufacturers, designers } = useOrder();
+  const { addOrder, Sources, designers } = useOrder();
   const { user } = useAuth();
   console.log('CreateOrderModal: Data from useOrder:', { 
-    manufacturers: manufacturers?.length || 0, 
+    sources: Sources?.length || 0, 
     designers: designers?.length || 0 
   });
   const [formData, setFormData] = useState({
@@ -24,7 +24,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) 
     purchaseOrder: '',
     designerId: '',
     cost: '',
-    manufacturerId: '',
+    sourceId: '',
     destinationName: '',
     status: OrderStatus.PENDING,
           priority: OrderPriority.STANDARD
@@ -58,7 +58,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) 
           purchaseOrder: '',
           designerId: '',
           cost: '',
-          manufacturerId: '',
+          sourceId: '',
           destinationName: '',
           status: OrderStatus.PENDING,
           priority: OrderPriority.STANDARD
@@ -199,22 +199,22 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Manufacturer *
+                Source *
               </label>
               <select
-                name="manufacturerId"
-                value={formData.manufacturerId}
+                name="SourceId"
+                value={formData.SourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
-                <option value="">Select a manufacturer</option>
-                {manufacturers && manufacturers.length > 0 ? manufacturers.map(manufacturer => (
-                  <option key={manufacturer.id} value={manufacturer.id}>
-                    {manufacturer.name}
+                <option value="">Select a Source</option>
+                {Sources && sources.length > 0 ? sources.map(Source => (
+                  <option key={source.id} value={source.id}>
+                    {source.name}
                   </option>
                 )) : (
-                  <option value="" disabled>No manufacturers available</option>
+                  <option value="" disabled>No Sources available</option>
                 )}
               </select>
             </div>

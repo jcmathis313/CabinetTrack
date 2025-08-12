@@ -86,7 +86,7 @@ CREATE TABLE email_verification_tokens (
 );
 
 -- Create independent tables with organization_id
-CREATE TABLE manufacturers (
+CREATE TABLE sources (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
@@ -145,7 +145,7 @@ CREATE TABLE pickups (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create orders table last (depends on manufacturers, designers, pickups)
+-- Create orders table last (depends on sources, designers, pickups)
 CREATE TABLE orders (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
@@ -155,7 +155,7 @@ CREATE TABLE orders (
   purchase_order VARCHAR(100),
   designer_id UUID REFERENCES designers(id) ON DELETE SET NULL,
   cost DECIMAL(10,2) DEFAULT 0.00,
-  manufacturer_id UUID REFERENCES manufacturers(id) ON DELETE SET NULL,
+  source_id UUID REFERENCES sources(id) ON DELETE SET NULL,
   destination_name VARCHAR(255) NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'pending',
   priority VARCHAR(20) NOT NULL DEFAULT 'medium',
@@ -187,8 +187,8 @@ CREATE INDEX idx_email_verification_tokens_user_id ON email_verification_tokens(
 CREATE INDEX idx_email_verification_tokens_token ON email_verification_tokens(token);
 CREATE INDEX idx_email_verification_tokens_expires_at ON email_verification_tokens(expires_at);
 
-CREATE INDEX idx_manufacturers_organization_id ON manufacturers(organization_id);
-CREATE INDEX idx_manufacturers_name ON manufacturers(name);
+CREATE INDEX idx_sources_organization_id ON sources(organization_id);
+CREATE INDEX idx_sources_name ON sources(name);
 
 CREATE INDEX idx_designers_organization_id ON designers(organization_id);
 CREATE INDEX idx_designers_name ON designers(name);
@@ -208,7 +208,7 @@ CREATE INDEX idx_orders_organization_id ON orders(organization_id);
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_priority ON orders(priority);
 CREATE INDEX idx_orders_designer_id ON orders(designer_id);
-CREATE INDEX idx_orders_manufacturer_id ON orders(manufacturer_id);
+CREATE INDEX idx_orders_source_id ON orders(source_id);
 CREATE INDEX idx_orders_pickup_id ON pickups(id);
 CREATE INDEX idx_orders_created_at ON orders(created_at);
 
@@ -227,7 +227,7 @@ CREATE TRIGGER update_subscription_plans_updated_at BEFORE UPDATE ON subscriptio
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_pickups_updated_at BEFORE UPDATE ON pickups FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_manufacturers_updated_at BEFORE UPDATE ON manufacturers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_sources_updated_at BEFORE UPDATE ON sources FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_designers_updated_at BEFORE UPDATE ON designers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON drivers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_organizational_settings_updated_at BEFORE UPDATE ON organizational_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -237,7 +237,7 @@ ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE billing_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE manufacturers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sources ENABLE ROW LEVEL SECURITY;
 ALTER TABLE designers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE drivers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE organizational_settings ENABLE ROW LEVEL SECURITY;
@@ -297,23 +297,23 @@ CREATE POLICY "Users can insert users in their organization" ON users
 CREATE POLICY "Allow user creation during signup" ON users
   FOR INSERT WITH CHECK (true);
 
--- Create RLS policies for manufacturers table
-CREATE POLICY "Users can view manufacturers in their organization" ON manufacturers
+-- Create RLS policies for sources table
+CREATE POLICY "Users can view sources in their organization" ON sources
   FOR SELECT USING (organization_id IN (
     SELECT organization_id FROM users WHERE id = auth.uid()
   ));
 
-CREATE POLICY "Users can insert manufacturers in their organization" ON manufacturers
+CREATE POLICY "Users can insert sources in their organization" ON sources
   FOR INSERT WITH CHECK (organization_id IN (
     SELECT organization_id FROM users WHERE id = auth.uid()
   ));
 
-CREATE POLICY "Users can update manufacturers in their organization" ON manufacturers
+CREATE POLICY "Users can update sources in their organization" ON sources
   FOR UPDATE USING (organization_id IN (
     SELECT organization_id FROM users WHERE id = auth.uid()
   ));
 
-CREATE POLICY "Users can delete manufacturers in their organization" ON manufacturers
+CREATE POLICY "Users can delete sources in their organization" ON sources
   FOR DELETE USING (organization_id IN (
     SELECT organization_id FROM users WHERE id = auth.uid()
   ));

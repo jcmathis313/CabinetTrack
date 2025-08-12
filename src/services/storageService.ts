@@ -3,7 +3,7 @@ import { Order, Pickup, Manufacturer, Designer, Driver, OrganizationalSettings }
 const STORAGE_KEYS = {
   ORDERS: 'cabinet_track_orders',
   PICKUPS: 'cabinet_track_pickups',
-  MANUFACTURERS: 'cabinet_track_manufacturers',
+  SOURCES: 'cabinet_track_sources',
   DESIGNERS: 'cabinet_track_designers',
   DRIVERS: 'cabinet_track_drivers'
 };
@@ -63,28 +63,28 @@ export class StorageService {
   }
 
   // Manufacturers
-  static getManufacturers(): Manufacturer[] {
+  static getSources(): Source[] {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.MANUFACTURERS);
+      const data = localStorage.getItem(STORAGE_KEYS.SOURCES);
       if (data) {
-        const manufacturers = JSON.parse(data);
-        return manufacturers.map((manufacturer: any) => ({
+        const sources = JSON.parse(data);
+        return sources.map((manufacturer: any) => ({
           ...manufacturer,
-          createdAt: new Date(manufacturer.createdAt),
-          updatedAt: new Date(manufacturer.updatedAt)
+          createdAt: new Date(source.createdAt),
+          updatedAt: new Date(source.updatedAt)
         }));
       }
     } catch (error) {
-      console.error('Error loading manufacturers:', error);
+      console.error('Error loading sources:', error);
     }
     return [];
   }
 
-  static saveManufacturers(manufacturers: Manufacturer[]): void {
+  static saveSources(sources: Source[]): void {
     try {
-      localStorage.setItem(STORAGE_KEYS.MANUFACTURERS, JSON.stringify(manufacturers));
+      localStorage.setItem(STORAGE_KEYS.SOURCES, JSON.stringify(sources));
     } catch (error) {
-      console.error('Error saving manufacturers:', error);
+      console.error('Error saving sources:', error);
     }
   }
 
@@ -175,7 +175,7 @@ export class StorageService {
     try {
       localStorage.removeItem('orders');
       localStorage.removeItem('pickups');
-      localStorage.removeItem('manufacturers');
+      localStorage.removeItem('sources');
       localStorage.removeItem('designers');
       localStorage.removeItem('drivers');
       localStorage.removeItem('organizationalSettings');
