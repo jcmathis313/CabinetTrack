@@ -711,7 +711,8 @@ export class SupabaseService {
           companyName: '',
           companyAddress: '',
           companyPhone: '',
-          logoUrl: undefined
+          logoUrl: undefined,
+          mobileIconUrl: undefined
         }
       }
 
@@ -735,14 +736,16 @@ export class SupabaseService {
         companyName: data.company_name,
         companyAddress: data.company_address,
         companyPhone: data.company_phone,
-        logoUrl: data.logo_url
+        logoUrl: data.logo_url,
+        mobileIconUrl: data.mobile_icon_url
       } : {
         id: '',
         organizationId,
         companyName: '',
         companyAddress: '',
         companyPhone: '',
-        logoUrl: undefined
+        logoUrl: undefined,
+        mobileIconUrl: undefined
       };
       
       console.log('SupabaseService: Returning settings:', result);
@@ -755,7 +758,8 @@ export class SupabaseService {
         companyName: '',
         companyAddress: '',
         companyPhone: '',
-        logoUrl: undefined
+        logoUrl: undefined,
+        mobileIconUrl: undefined
       }
     }
   }
@@ -780,6 +784,7 @@ export class SupabaseService {
         company_address: settings.companyAddress,
         company_phone: settings.companyPhone,
         logo_url: settings.logoUrl,
+        mobile_icon_url: settings.mobileIconUrl,
         created_at: now,
         updated_at: now
       }
@@ -790,6 +795,12 @@ export class SupabaseService {
       if (dbSettings.logo_url && dbSettings.logo_url.length > 1000000) {
         console.error('SupabaseService: Logo URL is too long:', dbSettings.logo_url.length, 'characters');
         throw new Error('Logo URL is too long. Please use a smaller image.');
+      }
+      
+      // Check if mobile_icon_url is too long
+      if (dbSettings.mobile_icon_url && dbSettings.mobile_icon_url.length > 500000) {
+        console.error('SupabaseService: Mobile icon URL is too long:', dbSettings.mobile_icon_url.length, 'characters');
+        throw new Error('Mobile icon URL is too long. Please use a smaller image.');
       }
       
       // First, check if a record already exists
@@ -812,6 +823,7 @@ export class SupabaseService {
             company_address: dbSettings.company_address,
             company_phone: dbSettings.company_phone,
             logo_url: dbSettings.logo_url,
+            mobile_icon_url: dbSettings.mobile_icon_url,
             updated_at: dbSettings.updated_at
           })
           .eq('id', existingData.id)

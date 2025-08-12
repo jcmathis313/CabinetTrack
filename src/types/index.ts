@@ -228,6 +228,7 @@ export interface OrganizationalSettings {
   companyAddress: string;
   companyPhone: string;
   logoUrl?: string;
+  mobileIconUrl?: string;
 }
 
 export interface LoginCredentials {

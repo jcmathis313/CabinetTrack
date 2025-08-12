@@ -52,7 +52,8 @@ const initialState: OrderState = {
     companyName: '',
     companyAddress: '',
     companyPhone: '',
-    logoUrl: undefined
+    logoUrl: undefined,
+    mobileIconUrl: undefined
   },
   loading: false,
   error: null
@@ -230,7 +231,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
             companyName: 'Demo Cabinet Company',
             companyAddress: '789 Business Ave, Commerce City, USA',
             companyPhone: '(555) 111-2222',
-            logoUrl: undefined
+            logoUrl: undefined,
+            mobileIconUrl: undefined
           };
 
           dispatch({ type: 'SET_ORDERS', payload: mockOrders });

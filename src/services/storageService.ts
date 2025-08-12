@@ -157,7 +157,8 @@ export class StorageService {
       companyName: '',
       companyAddress: '',
       companyPhone: '',
-      logoUrl: undefined
+      logoUrl: undefined,
+      mobileIconUrl: undefined
     };
   }
 

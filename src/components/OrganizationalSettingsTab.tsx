@@ -13,6 +13,7 @@ const OrganizationalSettingsTab: React.FC = () => {
   console.log('OrganizationalSettingsTab: formData state:', formData);
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mobileIconInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -111,6 +112,66 @@ const OrganizationalSettingsTab: React.FC = () => {
     console.log('Logo remove save result:', success);
     if (!success) {
       alert('Failed to remove logo. Please try again.');
+    }
+  };
+
+  const handleMobileIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log('Uploading mobile icon file:', file.name, 'Size:', file.size, 'bytes');
+      
+      // Check file size (limit to 512KB for mobile icons)
+      if (file.size > 512 * 1024) {
+        alert('Mobile icon file is too large. Please use an image smaller than 512KB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const mobileIconUrl = event.target?.result as string;
+          console.log('Mobile icon URL generated, length:', mobileIconUrl.length);
+          
+          // Compress the image if it's too large
+          let finalMobileIconUrl = mobileIconUrl;
+          if (mobileIconUrl.length > 200000) { // If base64 is larger than ~200KB
+            console.log('Mobile icon is large, attempting to compress...');
+            finalMobileIconUrl = await compressImage(mobileIconUrl, 192, 192); // Max 192x192 for mobile icons
+            console.log('Compressed mobile icon length:', finalMobileIconUrl.length);
+          }
+          
+          const updatedSettings = { ...formData, mobileIconUrl: finalMobileIconUrl };
+          setFormData(updatedSettings);
+          
+          // Save to Supabase via context
+          const success = await updateOrganizationalSettings(updatedSettings);
+          console.log('Mobile icon upload save result:', success);
+          if (!success) {
+            alert('Failed to save mobile icon. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error processing mobile icon:', error);
+          alert('Error processing mobile icon. Please try again.');
+        }
+      };
+      reader.onerror = () => {
+        console.error('Error reading file');
+        alert('Error reading mobile icon file. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveMobileIcon = async () => {
+    console.log('Removing mobile icon');
+    const updatedSettings = { ...formData, mobileIconUrl: undefined };
+    setFormData(updatedSettings);
+    
+    // Save to Supabase via context
+    const success = await updateOrganizationalSettings(updatedSettings);
+    console.log('Mobile icon remove save result:', success);
+    if (!success) {
+      alert('Failed to remove mobile icon. Please try again.');
     }
   };
 
@@ -309,6 +370,66 @@ const OrganizationalSettingsTab: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Mobile Icon Management */}
+        <div className="space-y-4">
+          <h4 className="text-md font-medium text-gray-900">Mobile Icon</h4>
+          <p className="text-sm text-gray-600">This icon will only appear on mobile devices (recommended: 192x192px)</p>
+          
+          <div className="space-y-4">
+            {formData.mobileIconUrl ? (
+              <div className="space-y-3">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <img
+                    src={formData.mobileIconUrl}
+                    alt="Mobile Icon"
+                    className="max-w-full h-24 w-24 object-contain mx-auto"
+                  />
+                </div>
+                {isEditing && (
+                  <button
+                    onClick={handleRemoveMobileIcon}
+                    className="btn-secondary flex items-center gap-2 w-full justify-center"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Remove Mobile Icon
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-sm text-gray-600 mb-2">No mobile icon uploaded</p>
+                {isEditing && (
+                  <button
+                    onClick={() => mobileIconInputRef.current?.click()}
+                    className="btn-secondary"
+                  >
+                    Upload Mobile Icon
+                  </button>
+                )}
+              </div>
+            )}
+            
+            {isEditing && !formData.mobileIconUrl && (
+              <button
+                onClick={() => mobileIconInputRef.current?.click()}
+                className="btn-primary flex items-center gap-2 w-full justify-center"
+              >
+                <Upload className="h-4 w-4" />
+                Upload Mobile Icon
+              </button>
+            )}
+            
+            <input
+              ref={mobileIconInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleMobileIconUpload}
+              className="hidden"
+            />
+          </div>
+        </div>
       </div>
 
       {!isEditing && (
@@ -326,6 +447,10 @@ const OrganizationalSettingsTab: React.FC = () => {
             <div>
               <span className="text-gray-500">Logo:</span>
               <p className="text-gray-900">{formData.logoUrl ? 'Uploaded' : 'Not uploaded'}</p>
+            </div>
+            <div>
+              <span className="text-gray-500">Mobile Icon:</span>
+              <p className="text-gray-900">{formData.mobileIconUrl ? 'Uploaded' : 'Not uploaded'}</p>
             </div>
             <div>
               <span className="text-gray-500">Organization Slug:</span>

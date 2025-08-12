@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Package, Settings, Users, User, LogOut, ChevronDown, CreditCard } from 'lucide-react';
+import { Package, Settings, Users, User, LogOut, ChevronDown, CreditCard, Home } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useOrder } from '../contexts/OrderContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -48,12 +48,22 @@ const Header: React.FC = () => {
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            {/* Mobile Icon - Only visible on mobile */}
+            {organizationalSettings.mobileIconUrl && (
+              <img 
+                src={organizationalSettings.mobileIconUrl} 
+                alt={organizationalSettings.companyName || 'Company Icon'} 
+                className="h-8 w-8 object-contain md:hidden"
+              />
+            )}
+            
+            {/* Desktop Logo - Hidden on mobile if mobile icon exists */}
             {organizationalSettings.logoUrl ? (
               <img 
                 src={organizationalSettings.logoUrl} 
                 alt={organizationalSettings.companyName || 'Company Logo'} 
-                className="h-8 w-auto max-w-48 object-contain"
+                className={`h-8 w-auto max-w-48 object-contain ${organizationalSettings.mobileIconUrl ? 'hidden md:block' : ''}`}
               />
             ) : (
               <>
@@ -63,32 +73,31 @@ const Header: React.FC = () => {
                 </h1>
               </>
             )}
-          </div>
+          </Link>
           
-          <nav className="flex space-x-8">
+          <nav className="flex items-center space-x-4 ml-auto">
             <Link
               to="/"
-              className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+              className={`inline-flex items-center p-2 rounded-md text-sm font-medium transition-colors ${
                 location.pathname === '/'
-                  ? 'border-indigo-500 text-gray-900'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'text-indigo-600 bg-indigo-50'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
               }`}
             >
-              Home
+              <Home className="h-5 w-5" />
             </Link>
             
             {/* Settings Dropdown */}
             <div className="relative" ref={settingsMenuRef}>
               <button
                 onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                className={`inline-flex items-center p-2 rounded-md text-sm font-medium transition-colors ${
                   isSettingsActive
-                    ? 'border-indigo-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    ? 'text-indigo-600 bg-indigo-50'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <Settings className="h-4 w-4 mr-1" />
-                Settings
+                <Settings className="h-5 w-5" />
                 <ChevronDown className="h-4 w-4 ml-1" />
               </button>
 
