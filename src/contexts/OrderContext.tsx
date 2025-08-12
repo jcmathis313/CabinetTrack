@@ -243,7 +243,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: mockOrgSettings });
         } else {
           console.log('OrderContext: Loading data from Supabase...');
-          const [orders, pickups, Sources, designers, drivers, orgSettings] = await Promise.all([
+          const [orders, pickups, sources, designers, drivers, orgSettings] = await Promise.all([
             SupabaseService.getOrders(),
             SupabaseService.getPickups(),
             SupabaseService.getSources(),
@@ -262,7 +262,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
           dispatch({ type: 'SET_ORDERS', payload: orders });
           dispatch({ type: 'SET_PICKUPS', payload: pickups });
-          dispatch({ type: 'SET_SOURCES', payload: Sources });
+          dispatch({ type: 'SET_SOURCES', payload: sources });
           dispatch({ type: 'SET_DESIGNERS', payload: designers });
           dispatch({ type: 'SET_DRIVERS', payload: drivers });
           dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: orgSettings });
@@ -556,7 +556,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       try {
         console.log('OrderContext: Loading data...');
-        const [orders, pickups, Sources, designers, drivers, orgSettings] = await Promise.all([
+        const [orders, pickups, sources, designers, drivers, orgSettings] = await Promise.all([
           SupabaseService.getOrders(),
           SupabaseService.getPickups(),
           SupabaseService.getSources(),
@@ -569,7 +569,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         
         dispatch({ type: 'SET_ORDERS', payload: orders });
         dispatch({ type: 'SET_PICKUPS', payload: pickups });
-        dispatch({ type: 'SET_SOURCES', payload: Sources });
+        dispatch({ type: 'SET_SOURCES', payload: sources });
         dispatch({ type: 'SET_DESIGNERS', payload: designers });
         dispatch({ type: 'SET_DRIVERS', payload: drivers });
         dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: orgSettings });
