@@ -13,7 +13,7 @@ import OrganizationalSettingsTab from '../components/OrganizationalSettingsTab';
 type TabType = 'Sources' | 'designers' | 'drivers' | 'organizational';
 
 const SettingsPage = () => {
-  const { deleteSource, deleteDesigner, deleteDriver, Sources, designers, drivers } = useOrder();
+  const { deleteSource, deleteDesigner, deleteDriver, sources, designers, drivers } = useOrder();
   const [activeTab, setActiveTab] = useState<TabType>('Sources');
   const [showCreateSource, setShowCreateSource] = useState(false);
   const [showCreateDesigner, setShowCreateDesigner] = useState(false);
@@ -70,13 +70,13 @@ const SettingsPage = () => {
               <p className="text-gray-500 text-center py-8">No Sources added yet.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sources.map(Source => (
+                {sources.map(source => (
                   <div key={source.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="font-medium text-gray-900">{source.name}</h3>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => setEditingSource(Source)}
+                          onClick={() => setEditingSource(source)}
                           className="text-primary-600 hover:text-primary-800"
                         >
                           <Edit className="h-4 w-4" />
@@ -255,7 +255,7 @@ const SettingsPage = () => {
         onClose={() => setShowCreateDriver(false)}
       />
       <EditSourceModal
-        Source={editingSource as Source}
+        source={editingSource as Source}
         isOpen={!!editingSource}
         onClose={() => setEditingSource(null)}
       />

@@ -11,10 +11,10 @@ interface CreateOrderModalProps {
 
 const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) => {
   console.log('CreateOrderModal: Rendering with isOpen:', isOpen);
-  const { addOrder, Sources, designers } = useOrder();
+  const { addOrder, sources, designers } = useOrder();
   const { user } = useAuth();
   console.log('CreateOrderModal: Data from useOrder:', { 
-    sources: Sources?.length || 0, 
+          sources: sources?.length || 0, 
     designers: designers?.length || 0 
   });
   const [formData, setFormData] = useState({
@@ -202,14 +202,14 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose }) 
                 Source *
               </label>
               <select
-                name="SourceId"
-                value={formData.SourceId}
+                name="sourceId"
+                value={formData.sourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
                 <option value="">Select a Source</option>
-                {Sources && sources.length > 0 ? sources.map(Source => (
+                {sources && sources.length > 0 ? sources.map(source => (
                   <option key={source.id} value={source.id}>
                     {source.name}
                   </option>

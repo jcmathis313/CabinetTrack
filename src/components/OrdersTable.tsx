@@ -28,7 +28,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   pickupFilter, 
   setPickupFilter 
 }) => {
-  const { deleteOrder, Sources, designers, pickups } = useOrder();
+  const { deleteOrder, sources, designers, pickups } = useOrder();
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -75,7 +75,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   const getEntityName = (id: string, entityType: 'Source' | 'designer') => {
     switch (entityType) {
       case 'Source':
-        return sources.find(m => m.id === id)?.name || 'Unknown';
+        return sources.find(s => s.id === id)?.name || 'Unknown';
       case 'designer':
         return designers.find(d => d.id === id)?.name || 'Unknown';
       default:
@@ -226,7 +226,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                 <StatusBadge type="priority" value={order.priority} size="sm" />
               </td>
               <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {getEntityName(order.SourceId, 'Source')}
+                {getEntityName(order.sourceId, 'Source')}
               </td>
               <td className="px-4 py-2 whitespace-nowrap">
                 <StatusBadge type="status" value={order.status} size="sm" />

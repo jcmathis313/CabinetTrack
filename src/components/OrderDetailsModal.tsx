@@ -18,13 +18,13 @@ interface OrderNote {
 }
 
 const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, onClose }) => {
-  const { Sources, designers, pickups } = useOrder();
+  const { sources, designers, pickups } = useOrder();
   const [notes, setNotes] = useState<OrderNote[]>([]);
   const [newNote, setNewNote] = useState('');
   const [isAddingNote, setIsAddingNote] = useState(false);
 
   // Get related entities
-  const Source = order ? sources.find(m => m.id === order.SourceId) : null;
+  const source = order ? sources.find(s => s.id === order.sourceId) : null;
   const designer = order ? designers.find(d => d.id === order.designerId) : null;
   const pickup = order?.pickupId ? pickups.find(p => p.id === order.pickupId) : null;
 
@@ -178,7 +178,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
     }
 
     // Source
-    if (Source) {
+    if (source) {
       if (yPosition > pageHeight - 60) {
         doc.addPage();
         yPosition = 20;
@@ -370,9 +370,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                       <span className="text-sm">Source</span>
                     </div>
                     <div className="ml-6">
-                      <p className="font-medium text-sm">{Source?.name || 'Unknown'}</p>
-                      <p className="text-xs text-gray-500">{Source?.address || 'No address'}</p>
-                      <p className="text-xs text-gray-500">{Source?.phoneNumber || 'No phone'}</p>
+                      <p className="font-medium text-sm">{source?.name || 'Unknown'}</p>
+                      <p className="text-xs text-gray-500">{source?.address || 'No address'}</p>
+                      <p className="text-xs text-gray-500">{source?.phoneNumber || 'No phone'}</p>
                     </div>
                   </div>
 

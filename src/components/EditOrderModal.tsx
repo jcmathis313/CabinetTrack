@@ -10,7 +10,7 @@ interface EditOrderModalProps {
 }
 
 const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose }) => {
-  const { Sources, designers } = useOrder();
+  const { sources, designers } = useOrder();
   const [formData, setFormData] = useState({
     jobName: '',
     jobNumber: '',
@@ -33,7 +33,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose 
         purchaseOrder: order.purchaseOrder,
         designerId: order.designerId,
         cost: order.cost.toString(),
-        sourceId: order.SourceId,
+        sourceId: order.sourceId,
         destinationName: order.destinationName,
         status: order.status,
         priority: order.priority
@@ -198,14 +198,14 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({ order, isOpen, onClose 
                 Source *
               </label>
               <select
-                name="SourceId"
-                value={formData.SourceId}
+                name="sourceId"
+                value={formData.sourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
                 <option value="">Select a Source</option>
-                {sources.map(Source => (
+                {sources.map(source => (
                   <option key={source.id} value={source.id}>
                     {source.name}
                   </option>

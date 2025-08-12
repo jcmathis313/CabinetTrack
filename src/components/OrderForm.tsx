@@ -12,7 +12,7 @@ interface OrderFormProps {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) => {
-  const { addOrder, updateOrder, designers, Sources } = useOrder();
+  const { addOrder, updateOrder, designers, sources } = useOrder();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     jobName: '',
@@ -226,14 +226,14 @@ const OrderForm: React.FC<OrderFormProps> = ({ order, isOpen, onClose, mode }) =
                 Source *
               </label>
               <select
-                name="SourceId"
-                value={formData.SourceId}
+                name="sourceId"
+                value={formData.sourceId}
                 onChange={handleChange}
                 required
                 className="input"
               >
                 <option value="">Select Source</option>
-                {sources.map(Source => (
+                {sources.map(source => (
                   <option key={source.id} value={source.id}>
                     {source.name}
                   </option>

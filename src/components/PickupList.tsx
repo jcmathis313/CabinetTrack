@@ -9,7 +9,7 @@ import ActionButton from './ActionButton';
 import EditPickupModal from './EditPickupModal';
 
 const PickupList: React.FC = () => {
-  const { pickups, drivers, orders, Sources, designers, updatePickup } = useOrder();
+  const { pickups, drivers, orders, sources, designers, updatePickup } = useOrder();
   const [editingPickup, setEditingPickup] = useState<any>(null);
   const [showPickupForm, setShowPickupForm] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('edit');
@@ -80,7 +80,7 @@ const PickupList: React.FC = () => {
     const pickupOrders = orders.filter(o => pickup.orders.includes(o.id));
     
     if (driver) {
-      await PDFService.exportPickupPDF(pickup, pickupOrders, Sources, designers, driver);
+              await PDFService.exportPickupPDF(pickup, pickupOrders, sources, designers, driver);
     }
   };
 
