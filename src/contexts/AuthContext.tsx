@@ -48,9 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           canManageBilling: true,
           canViewReports: true,
           canManageSettings: true
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        }
       });
       setLoading(false);
       return;
