@@ -1,5 +1,5 @@
 import { supabase } from '../config/supabase'
-import { Order, Pickup, Manufacturer, Designer, Driver, OrganizationalSettings } from '../types'
+import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings } from '../types'
 
 export class SupabaseService {
   // Helper method to get current user's organization ID
@@ -48,7 +48,7 @@ export class SupabaseService {
         purchaseOrder: order.purchase_order,
         designerId: order.designer_id,
         cost: order.cost,
-        sourceId: order.manufacturer_id,
+        sourceId: order.source_id,
         destinationName: order.destination_name,
         status: order.status,
         priority: order.priority,
@@ -82,7 +82,7 @@ export class SupabaseService {
         purchase_order: order.purchaseOrder,
         designer_id: order.designerId,
         cost: order.cost,
-        manufacturer_id: order.manufacturerId,
+        source_id: order.sourceId,
         destination_name: order.destinationName,
         status: order.status,
         priority: order.priority,
@@ -112,7 +112,7 @@ export class SupabaseService {
         orderNumber: data.order_number,
         purchaseOrder: data.purchase_order,
         designerId: data.designer_id,
-        sourceId: data.manufacturer_id,
+        sourceId: data.source_id,
         destinationName: data.destination_name,
         pickupId: data.pickup_id,
         createdAt: new Date(data.created_at),
@@ -138,7 +138,7 @@ export class SupabaseService {
       if (updates.purchaseOrder !== undefined) dbUpdates.purchase_order = updates.purchaseOrder
       if (updates.designerId !== undefined) dbUpdates.designer_id = updates.designerId
       if (updates.cost !== undefined) dbUpdates.cost = updates.cost
-      if (updates.manufacturerId !== undefined) dbUpdates.manufacturer_id = updates.manufacturerId
+      if (updates.sourceId !== undefined) dbUpdates.source_id = updates.sourceId
       if (updates.destinationName !== undefined) dbUpdates.destination_name = updates.destinationName
       if (updates.status !== undefined) dbUpdates.status = updates.status
       if (updates.priority !== undefined) dbUpdates.priority = updates.priority
@@ -162,7 +162,7 @@ export class SupabaseService {
         orderNumber: data.order_number,
         purchaseOrder: data.purchase_order,
         designerId: data.designer_id,
-        sourceId: data.manufacturer_id,
+        sourceId: data.source_id,
         destinationName: data.destination_name,
         pickupId: data.pickup_id,
         createdAt: new Date(data.created_at),
@@ -332,7 +332,7 @@ export class SupabaseService {
     }
   }
 
-  // Manufacturers
+  // Sources
   static async getSources(): Promise<Source[]> {
     try {
       const organizationId = await this.getCurrentOrganizationId()
@@ -346,7 +346,7 @@ export class SupabaseService {
 
       if (error) throw error
 
-      return data?.map(manufacturer => ({
+      return data?.map(source => ({
         id: source.id,
         organizationId: source.organization_id,
         name: source.name,
@@ -362,9 +362,9 @@ export class SupabaseService {
     }
   }
 
-  static async saveSource(manufacturer: Omit<Manufacturer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Manufacturer | null> {
+  static async saveSource(source: Omit<Source, 'id' | 'createdAt' | 'updatedAt'>): Promise<Source | null> {
     try {
-      console.log('SupabaseService: Attempting to save manufacturer:', manufacturer)
+      console.log('SupabaseService: Attempting to save source:', source)
       const organizationId = await this.getCurrentOrganizationId()
       console.log('SupabaseService: Organization ID:', organizationId)
       if (!organizationId) {
@@ -374,7 +374,7 @@ export class SupabaseService {
 
       const now = new Date().toISOString()
       // Map camelCase fields to snake_case for database
-      const dbManufacturer = {
+      const dbSource = {
         organization_id: organizationId,
         name: source.name,
         address: source.address,
@@ -384,10 +384,10 @@ export class SupabaseService {
         updated_at: now
       }
       
-      console.log('SupabaseService: Inserting manufacturer data:', dbManufacturer)
+      console.log('SupabaseService: Inserting source data:', dbSource)
       const { data, error } = await supabase
         .from('sources')
-        .insert([dbManufacturer])
+        .insert([dbSource])
         .select()
         .single()
 
@@ -406,12 +406,12 @@ export class SupabaseService {
         updatedAt: new Date(data.updated_at)
       } : null
     } catch (error) {
-      console.error('Error saving manufacturer:', error)
+      console.error('Error saving source:', error)
       return null
     }
   }
 
-  static async updateSource(id: string, updates: Partial<Manufacturer>): Promise<Manufacturer | null> {
+  static async updateSource(id: string, updates: Partial<Source>): Promise<Source | null> {
     try {
       const organizationId = await this.getCurrentOrganizationId()
       if (!organizationId) return null

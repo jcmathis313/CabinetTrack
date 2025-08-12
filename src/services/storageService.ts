@@ -1,4 +1,4 @@
-import { Order, Pickup, Manufacturer, Designer, Driver, OrganizationalSettings } from '../types';
+import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings } from '../types';
 
 const STORAGE_KEYS = {
   ORDERS: 'cabinet_track_orders',
@@ -62,14 +62,14 @@ export class StorageService {
     }
   }
 
-  // Manufacturers
+  // Sources
   static getSources(): Source[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SOURCES);
       if (data) {
         const sources = JSON.parse(data);
-        return sources.map((manufacturer: any) => ({
-          ...manufacturer,
+        return sources.map((source: any) => ({
+          ...source,
           createdAt: new Date(source.createdAt),
           updatedAt: new Date(source.updatedAt)
         }));
