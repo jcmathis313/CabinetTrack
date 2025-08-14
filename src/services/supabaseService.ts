@@ -909,11 +909,15 @@ export class SupabaseService {
       }
       
       console.log('SupabaseService: Inserting return data:', dbReturn)
+      console.log('SupabaseService: About to call supabase.from("returns").insert()')
+      
       const { data, error } = await supabase
         .from('returns')
         .insert([dbReturn])
         .select()
         .single()
+
+      console.log('SupabaseService: Supabase response - data:', data, 'error:', error)
 
       if (error) {
         console.error('SupabaseService: Database error:', error)
@@ -923,7 +927,7 @@ export class SupabaseService {
       console.log('SupabaseService: Return saved successfully:', data)
       
       // Map back to camelCase
-      return {
+      const mappedReturn = {
         id: data.id,
         organizationId: data.organization_id,
         name: data.name,
@@ -935,8 +939,11 @@ export class SupabaseService {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at)
       }
+      
+      console.log('SupabaseService: Mapped return object:', mappedReturn)
+      return mappedReturn
     } catch (error) {
-      console.error('Error saving return:', error)
+      console.error('SupabaseService: Error saving return:', error)
       return null
     }
   }

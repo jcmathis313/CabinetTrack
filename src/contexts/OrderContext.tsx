@@ -559,8 +559,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const addReturn = async (returnItem: Omit<Return, 'id' | 'createdAt' | 'updatedAt'>): Promise<Return | null> => {
     try {
       console.log('OrderContext: Attempting to add return:', returnItem);
+      console.log('OrderContext: isSupabaseConfigured:', isSupabaseConfigured);
       
       if (!isSupabaseConfigured) {
+        console.log('OrderContext: Using mock return for development');
         // Return mock return for development
         const mockReturn: Return = {
           ...returnItem,
@@ -568,15 +570,20 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           createdAt: new Date(),
           updatedAt: new Date()
         };
+        console.log('OrderContext: Created mock return:', mockReturn);
         dispatch({ type: 'ADD_RETURN', payload: mockReturn });
         return mockReturn;
       }
 
+      console.log('OrderContext: Calling SupabaseService.saveReturn');
       const result = await SupabaseService.saveReturn(returnItem);
       console.log('OrderContext: Return creation result:', result);
       if (result) {
+        console.log('OrderContext: Dispatching ADD_RETURN action');
         dispatch({ type: 'ADD_RETURN', payload: result });
         dispatch({ type: 'SET_ERROR', payload: null });
+      } else {
+        console.log('OrderContext: SupabaseService.saveReturn returned null');
       }
       return result;
     } catch (error) {

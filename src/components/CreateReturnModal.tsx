@@ -41,9 +41,12 @@ const CreateReturnModal: React.FC<CreateReturnModalProps> = ({ isOpen, onClose }
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('CreateReturnModal: Form submission started');
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
+
+    console.log('CreateReturnModal: Form data:', formData);
 
     // Validation
     const newErrors: { [key: string]: string } = {};
@@ -57,6 +60,8 @@ const CreateReturnModal: React.FC<CreateReturnModalProps> = ({ isOpen, onClose }
       newErrors.scheduledDate = 'Scheduled date is required';
     }
 
+    console.log('CreateReturnModal: Validation errors:', newErrors);
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setIsSubmitting(false);
@@ -64,17 +69,29 @@ const CreateReturnModal: React.FC<CreateReturnModalProps> = ({ isOpen, onClose }
     }
 
     try {
+      console.log('CreateReturnModal: Calling addReturn with data:', {
+        ...formData,
+        organizationId: user?.organizationId || '',
+        scheduledDate: new Date(formData.scheduledDate)
+      });
+      
       const result = await addReturn({
         ...formData,
         organizationId: user?.organizationId || '',
         scheduledDate: new Date(formData.scheduledDate)
       });
       
+      console.log('CreateReturnModal: addReturn result:', result);
+      
       if (result) {
+        console.log('CreateReturnModal: Return created successfully, closing modal');
         onClose();
+      } else {
+        console.log('CreateReturnModal: addReturn returned null/undefined');
+        setErrors({ submit: 'Failed to create return. Please try again.' });
       }
     } catch (error) {
-      console.error('Error creating return:', error);
+      console.error('CreateReturnModal: Error creating return:', error);
       setErrors({ submit: 'Failed to create return. Please try again.' });
     } finally {
       setIsSubmitting(false);
