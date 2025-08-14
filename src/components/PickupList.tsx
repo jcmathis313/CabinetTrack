@@ -18,7 +18,7 @@ const PickupList: React.FC = () => {
   const getStatusColor = (status: PickupStatus) => {
     switch (status) {
       case PickupStatus.SCHEDULED:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case PickupStatus.IN_PROGRESS:
         return 'bg-yellow-100 text-yellow-800';
       case PickupStatus.COMPLETED:
@@ -37,7 +37,7 @@ const PickupList: React.FC = () => {
       case PickupPriority.LOW:
         return 'bg-gray-100 text-gray-800';
       case PickupPriority.STANDARD:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case PickupPriority.HIGH:
         return 'bg-orange-100 text-orange-800';
       case PickupPriority.URGENT:

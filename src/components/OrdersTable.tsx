@@ -198,7 +198,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                             setFormMode('edit');
                             setShowOrderForm(true);
                           }}
-                          className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                          className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"
                           title="Edit order"
                         >
                           <Edit className="h-4 w-4" />
@@ -221,7 +221,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                             e.stopPropagation();
                             handleReactivateOrder(order.id);
                           }}
-                          className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                          className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"
                           title="Reactivate order"
                         >
                           <RotateCcw className="h-4 w-4" />

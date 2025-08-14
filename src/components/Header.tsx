@@ -48,7 +48,7 @@ const Header: React.FC = () => {
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <Link to="/dashboard" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             {/* Mobile Icon - Only visible on mobile */}
             {organizationalSettings.mobileIconUrl && (
               <img 
@@ -79,9 +79,9 @@ const Header: React.FC = () => {
           
           <nav className="flex items-center ml-auto" style={{ gap: '16px' }}>
             <Link
-              to="/"
+              to="/dashboard"
               className={`inline-flex items-center p-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/'
+                location.pathname === '/dashboard'
                   ? 'text-indigo-600 bg-indigo-50'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
               }`}

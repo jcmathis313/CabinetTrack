@@ -80,7 +80,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
       case OrderStatus.PENDING:
         return 'bg-gray-100 text-gray-800';
       case OrderStatus.IN_PROGRESS:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case OrderStatus.READY_FOR_PICKUP:
         return 'bg-yellow-100 text-yellow-800';
       case OrderStatus.PICKED_UP:
@@ -101,7 +101,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
       case OrderPriority.LOW:
         return 'bg-gray-100 text-gray-800';
       case OrderPriority.STANDARD:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case OrderPriority.HIGH:
         return 'bg-orange-100 text-orange-800';
       case OrderPriority.URGENT:

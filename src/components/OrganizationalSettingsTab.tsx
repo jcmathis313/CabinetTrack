@@ -461,7 +461,7 @@ const OrganizationalSettingsTab: React.FC = () => {
                 {user?.organization?.slug && (
                   <button
                     onClick={handleCopySlug}
-                    className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                    className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"
                     title="Copy slug to clipboard"
                   >
                     <Copy className="h-3 w-3" />

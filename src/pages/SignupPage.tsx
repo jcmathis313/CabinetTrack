@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignupPage: React.FC = () => {
@@ -63,7 +64,7 @@ const SignupPage: React.FC = () => {
       });
 
       if (result.success) {
-        navigate('/');
+        navigate('/dashboard');
       } else {
         setError(result.error || 'Signup failed');
       }
@@ -77,7 +78,13 @@ const SignupPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center space-x-3">
+            <Package className="h-12 w-12 text-indigo-600" />
+            <span className="text-2xl font-bold text-gray-900">CabinetTrack</span>
+          </div>
+        </div>
+        <h2 className="text-center text-3xl font-extrabold text-gray-900">
           Create your organization
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">

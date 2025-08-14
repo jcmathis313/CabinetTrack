@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Header from './components/Header'
+import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import SettingsPage from './pages/SettingsPage'
 import SubscriptionPage from './pages/SubscriptionPage'
@@ -38,34 +39,55 @@ const AppContent: React.FC = () => {
   return (
     <OrderProvider>
       <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-              <ProtectedRoute>
-                <UsersPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/subscription" element={
-              <ProtectedRoute>
-                <SubscriptionPage />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </main>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <main>
+                  <HomePage />
+                </main>
+              </div>
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <main>
+                  <SettingsPage />
+                </main>
+              </div>
+            </ProtectedRoute>
+          } />
+          <Route path="/users" element={
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <main>
+                  <UsersPage />
+                </main>
+              </div>
+            </ProtectedRoute>
+          } />
+          <Route path="/subscription" element={
+            <ProtectedRoute>
+              <div>
+                <Header />
+                <main>
+                  <SubscriptionPage />
+                </main>
+              </div>
+            </ProtectedRoute>
+          } />
+        </Routes>
       </div>
     </OrderProvider>
   );

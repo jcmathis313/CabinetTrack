@@ -14,7 +14,7 @@ const ArchivedPickupsTable: React.FC = () => {
       case PickupPriority.LOW:
         return 'bg-gray-100 text-gray-800';
       case PickupPriority.STANDARD:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case PickupPriority.HIGH:
         return 'bg-orange-100 text-orange-800';
       case PickupPriority.URGENT:
@@ -123,7 +123,7 @@ const ArchivedPickupsTable: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleReactivatePickup(pickup.id)}
-                        className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                        className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"
                         title="Reactivate pickup"
                       >
                         <RotateCcw className="h-4 w-4" />

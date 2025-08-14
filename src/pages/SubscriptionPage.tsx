@@ -91,7 +91,7 @@ const SubscriptionPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading subscription information...</p>
         </div>
       </div>
@@ -163,7 +163,7 @@ const SubscriptionPage: React.FC = () => {
                 <div className="mt-2">
                   <div className="bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full" 
+                      className="bg-indigo-600 h-2 rounded-full" 
                       style={{ 
                         width: usageMetrics.users.limit === -1 ? '100%' : 
                           `${Math.min((usageMetrics.users.total / usageMetrics.users.limit) * 100, 100)}%` 
@@ -257,13 +257,13 @@ const SubscriptionPage: React.FC = () => {
                   key={plan.id} 
                   className={`relative rounded-lg border-2 p-6 ${
                     isCurrentPlan 
-                      ? 'border-blue-500 bg-blue-50' 
+                      ? 'border-indigo-500 bg-indigo-50' 
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   {isCurrentPlan && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-600 text-white">
                         Current Plan
                       </span>
                     </div>
@@ -344,7 +344,7 @@ const SubscriptionPage: React.FC = () => {
                       <button
                         onClick={() => handleUpgrade(plan.name as 'pro' | 'enterprise')}
                         disabled={upgrading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
                       >
                         {upgrading ? 'Upgrading...' : 'Upgrade'}
                       </button>

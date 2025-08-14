@@ -14,7 +14,7 @@ const ReturnList: React.FC = () => {
   const getStatusIcon = (status: ReturnStatus) => {
     switch (status) {
       case ReturnStatus.SCHEDULED:
-        return <Calendar className="h-4 w-4 text-blue-500" />;
+        return <Calendar className="h-4 w-4 text-indigo-500" />;
       case ReturnStatus.IN_PROGRESS:
         return <AlertCircle className="h-4 w-4 text-yellow-500" />;
       case ReturnStatus.COMPLETED:
@@ -35,7 +35,7 @@ const ReturnList: React.FC = () => {
       case 'high':
         return 'bg-orange-100 text-orange-800';
       case 'standard':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case 'low':
         return 'bg-gray-100 text-gray-800';
       default:

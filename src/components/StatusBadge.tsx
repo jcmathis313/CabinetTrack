@@ -17,7 +17,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ type, value, size = 'md' }) =
       case OrderStatus.IN_PROGRESS:
       case PickupStatus.IN_PROGRESS:
       case ReturnStatus.IN_PROGRESS:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case OrderStatus.READY_FOR_PICKUP:
         return 'bg-yellow-100 text-yellow-800';
       case OrderStatus.PICKED_UP:
@@ -47,7 +47,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ type, value, size = 'md' }) =
         return 'bg-gray-100 text-gray-800';
       case OrderPriority.STANDARD:
       case PickupPriority.STANDARD:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-indigo-100 text-indigo-800';
       case OrderPriority.HIGH:
       case PickupPriority.HIGH:
         return 'bg-orange-100 text-orange-800';

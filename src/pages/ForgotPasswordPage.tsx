@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const ForgotPasswordPage: React.FC = () => {
@@ -43,6 +44,12 @@ const ForgotPasswordPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center space-x-3">
+              <Package className="h-12 w-12 text-indigo-600" />
+              <span className="text-2xl font-bold text-gray-900">CabinetTrack</span>
+            </div>
+          </div>
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
               <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,7 +77,13 @@ const ForgotPasswordPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center space-x-3">
+            <Package className="h-12 w-12 text-indigo-600" />
+            <span className="text-2xl font-bold text-gray-900">CabinetTrack</span>
+          </div>
+        </div>
+        <h2 className="text-center text-3xl font-extrabold text-gray-900">
           Reset your password
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
