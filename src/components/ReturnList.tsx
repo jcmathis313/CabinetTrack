@@ -172,54 +172,68 @@ const ReturnList: React.FC = () => {
       {archivedReturns.length > 0 && (
         <div className="mt-6">
           <h3 className="text-base font-medium text-gray-900 mb-3">Archived Returns</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {archivedReturns.map(returnItem => {
-              const returnOrders = orders.filter(order => returnItem.orders.includes(order.id));
-              const driver = drivers.find(d => d.id === returnItem.driverId);
-              
-              return (
-                <div key={returnItem.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(returnItem.status)}
-                      <h4 className="font-medium text-gray-900">{returnItem.name}</h4>
-                    </div>
-                    <button
-                      onClick={() => handleExportPDF(returnItem)}
-                      className="text-gray-600 hover:text-gray-800"
-                    >
-                      <FileText className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(returnItem.scheduledDate).toLocaleDateString()}</span>
-                    </div>
-                    
-                    {driver && (
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        <span>{driver.name}</span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4" />
-                      <span>{returnOrders.length} orders</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(returnItem.priority)}`}>
-                        {returnItem.priority}
-                      </span>
-                      <StatusBadge type="status" value={returnItem.status} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Return Name
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Driver
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Priority
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Scheduled Date
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Orders
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {archivedReturns.map(returnItem => {
+                  const returnOrders = orders.filter(order => returnItem.orders.includes(order.id));
+                  const driver = drivers.find(d => d.id === returnItem.driverId);
+                  
+                  return (
+                    <tr key={returnItem.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {returnItem.name}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                        {driver ? driver.name : 'Unassigned'}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(returnItem.priority)}`}>
+                          {returnItem.priority.charAt(0).toUpperCase() + returnItem.priority.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                        {new Date(returnItem.scheduledDate).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                        {returnOrders.length} order{returnOrders.length !== 1 ? 's' : ''}
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleExportPDF(returnItem)}
+                          className="text-gray-600 hover:text-gray-800 p-1 rounded hover:bg-gray-50"
+                          title="Export PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

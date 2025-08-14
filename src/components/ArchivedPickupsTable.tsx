@@ -34,7 +34,7 @@ const ArchivedPickupsTable: React.FC = () => {
     const pickupOrders = orders.filter(o => pickup.orders.includes(o.id));
     
     if (driver) {
-              await PDFService.exportPickupPDF(pickup, pickupOrders, sources, designers, driver);
+      await PDFService.exportPickupPDF(pickup, pickupOrders, sources, designers, driver);
     }
   };
 
@@ -54,87 +54,87 @@ const ArchivedPickupsTable: React.FC = () => {
   }
 
   return (
-    <div className="mt-8">
-      <div className="flex items-center gap-2 mb-4 px-6">
-        <h3 className="text-lg font-semibold text-gray-900">Archived Pickups</h3>
-        <span className="text-sm text-gray-500">({archivedPickups.length})</span>
+    <div className="card">
+      <div className="p-6 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900">Archived Pickups ({archivedPickups.length})</h3>
       </div>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Pickup Name
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Driver
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Priority
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Scheduled Date
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Orders
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Cost
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {archivedPickups.map((pickup) => (
-              <tr key={pickup.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {pickup.name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                  {getDriverName(pickup.driverId)}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(pickup.priority)}`}>
-                    {pickup.priority.charAt(0).toUpperCase() + pickup.priority.slice(1)}
-                  </span>
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(pickup.scheduledDate).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                  {pickup.orders.length} order{pickup.orders.length !== 1 ? 's' : ''}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                  ${pickup.orders.reduce((total, orderId) => {
-                    const order = orders.find(o => o.id === orderId);
-                    return total + (order?.cost || 0);
-                  }, 0).toLocaleString()}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleExportPickup(pickup)}
-                      className="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-50"
-                      title="Export PDF"
-                    >
-                      <Download className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleReactivatePickup(pickup.id)}
-                      className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
-                      title="Reactivate pickup"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
+      <div className="p-3">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Pickup Name
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Driver
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Priority
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Scheduled Date
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Orders
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total Cost
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {archivedPickups.map((pickup) => (
+                <tr key={pickup.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {pickup.name}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {getDriverName(pickup.driverId)}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(pickup.priority)}`}>
+                      {pickup.priority.charAt(0).toUpperCase() + pickup.priority.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {new Date(pickup.scheduledDate).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {pickup.orders.length} order{pickup.orders.length !== 1 ? 's' : ''}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    ${pickup.orders.reduce((total, orderId) => {
+                      const order = orders.find(o => o.id === orderId);
+                      return total + (order?.cost || 0);
+                    }, 0).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleExportPickup(pickup)}
+                        className="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-50"
+                        title="Export PDF"
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleReactivatePickup(pickup.id)}
+                        className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                        title="Reactivate pickup"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

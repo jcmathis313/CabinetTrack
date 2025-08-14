@@ -134,8 +134,8 @@ const HomePage = () => {
                 </button>
               </div>
               <PickupList />
-              <ArchivedPickupsTable />
             </div>
+                          <ArchivedPickupsTable />
           </div>
         );
 

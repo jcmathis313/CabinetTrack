@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, ChevronUp, ChevronDown, Search } from 'lucide-react';
+import { Edit, Trash2, ChevronUp, ChevronDown, Search, RotateCcw } from 'lucide-react';
 import { Order, OrderStatus, OrderPriority } from '../types';
 import { useOrder } from '../contexts/OrderContext';
 import OrderForm from './OrderForm';
@@ -28,7 +28,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   pickupFilter, 
   setPickupFilter 
 }) => {
-  const { deleteOrder, sources, designers, pickups } = useOrder();
+  const { deleteOrder, updateOrder, sources, designers, pickups } = useOrder();
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -70,7 +70,16 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
     }
   };
 
-
+  const handleReactivateOrder = async (orderId: string) => {
+    if (confirm('Are you sure you want to reactivate this order?')) {
+      try {
+        await updateOrder(orderId, { status: OrderStatus.PENDING });
+      } catch (error) {
+        console.error('Error reactivating order:', error);
+        alert('Failed to reactivate order. Please try again.');
+      }
+    }
+  };
 
   const getEntityName = (id: string, entityType: 'Source' | 'designer') => {
     switch (entityType) {
@@ -100,6 +109,134 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
     { key: 'pickupId' as SortField, label: 'Pickup', sortable: false },
     { key: 'actions' as SortField, label: 'Actions', sortable: false },
   ];
+
+  // Filter orders by status
+  const activeOrders = sortedOrders.filter(order => 
+    order.status !== OrderStatus.DELIVERED && order.status !== OrderStatus.CANCELLED
+  );
+  const deliveredOrders = sortedOrders.filter(order => order.status === OrderStatus.DELIVERED);
+  const cancelledOrders = sortedOrders.filter(order => order.status === OrderStatus.CANCELLED);
+
+  const renderOrderTable = (ordersToRender: Order[], title: string, showActions: boolean = true) => {
+    if (ordersToRender.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="mt-6">
+        <h3 className="text-base font-medium text-gray-900 mb-3">{title} ({ordersToRender.length})</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                {columns.map((column) => (
+                  <th
+                    key={column.key}
+                    className={`px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                      column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
+                    }`}
+                    onClick={() => column.sortable && handleSort(column.key)}
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>{column.label}</span>
+                      {column.sortable && (
+                        <span className="text-gray-400">
+                          {sortField === column.key ? (
+                            sortDirection === 'asc' ? (
+                              <ChevronUp className="h-3 w-3" />
+                            ) : (
+                              <ChevronDown className="h-3 w-3" />
+                            )
+                          ) : (
+                            <ChevronUp className="h-3 w-3 opacity-0" />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {ordersToRender.map((order) => (
+                <tr 
+                  key={order.id} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setSelectedOrder(order)}
+                >
+                  <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {order.jobName}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {order.jobNumber}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {order.orderNumber}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {order.purchaseOrder}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <StatusBadge type="priority" value={order.priority} size="sm" />
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {getEntityName(order.sourceId, 'Source')}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <StatusBadge type="status" value={order.status} size="sm" />
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                    {getPickupName(order.pickupId)}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                    {showActions ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingOrder(order);
+                            setFormMode('edit');
+                            setShowOrderForm(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                          title="Edit order"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteOrder(order.id);
+                          }}
+                          className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
+                          title="Delete order"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReactivateOrder(order.id);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+                          title="Reactivate order"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
 
   if (orders.length === 0) {
     return (
@@ -171,100 +308,14 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                className={`px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                  column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
-                }`}
-                onClick={() => column.sortable && handleSort(column.key)}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>{column.label}</span>
-                  {column.sortable && (
-                    <span className="text-gray-400">
-                      {sortField === column.key ? (
-                        sortDirection === 'asc' ? (
-                          <ChevronUp className="h-3 w-3" />
-                        ) : (
-                          <ChevronDown className="h-3 w-3" />
-                        )
-                      ) : (
-                        <ChevronUp className="h-3 w-3 opacity-0" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedOrders.map((order) => (
-            <tr 
-              key={order.id} 
-              className="hover:bg-gray-50 cursor-pointer"
-              onClick={() => setSelectedOrder(order)}
-            >
-              <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                {order.jobName}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {order.jobNumber}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {order.orderNumber}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {order.purchaseOrder}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap">
-                <StatusBadge type="priority" value={order.priority} size="sm" />
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {getEntityName(order.sourceId, 'Source')}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap">
-                <StatusBadge type="status" value={order.status} size="sm" />
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                {getPickupName(order.pickupId)}
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
-                <div className="flex gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingOrder(order);
-                      setFormMode('edit');
-                      setShowOrderForm(true);
-                    }}
-                    className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
-                    title="Edit order"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteOrder(order.id);
-                    }}
-                    className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
-                    title="Delete order"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
+      {/* Active Orders */}
+      {renderOrderTable(activeOrders, 'Active Orders', true)}
+
+      {/* Delivered Orders */}
+      {renderOrderTable(deliveredOrders, 'Delivered Orders', false)}
+
+      {/* Cancelled Orders */}
+      {renderOrderTable(cancelledOrders, 'Cancelled Orders', false)}
 
       {showOrderForm && editingOrder && (
         <OrderForm
