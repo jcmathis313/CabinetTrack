@@ -133,6 +133,9 @@ interface OrderContextType extends OrderState {
   addPickup: (pickup: Omit<Pickup, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Pickup | null>;
   updatePickup: (id: string, updates: Partial<Pickup>) => Promise<Pickup | null>;
   deletePickup: (id: string) => Promise<boolean>;
+  addReturn: (returnItem: Omit<Return, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Return | null>;
+  updateReturn: (id: string, updates: Partial<Return>) => Promise<Return | null>;
+  deleteReturn: (id: string) => Promise<boolean>;
   addSource: (Source: Omit<Source, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Source | null>;
   updateSource: (id: string, updates: Partial<Source>) => Promise<Source | null>;
   deleteSource: (id: string) => Promise<boolean>;
@@ -251,15 +254,17 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
           dispatch({ type: 'SET_ORDERS', payload: mockOrders });
           dispatch({ type: 'SET_PICKUPS', payload: mockPickups });
+          dispatch({ type: 'SET_RETURNS', payload: [] });
           dispatch({ type: 'SET_SOURCES', payload: mockSources });
           dispatch({ type: 'SET_DESIGNERS', payload: mockDesigners });
           dispatch({ type: 'SET_DRIVERS', payload: mockDrivers });
           dispatch({ type: 'SET_ORGANIZATIONAL_SETTINGS', payload: mockOrgSettings });
         } else {
           console.log('OrderContext: Loading data from Supabase...');
-          const [orders, pickups, sources, designers, drivers, orgSettings] = await Promise.all([
+          const [orders, pickups, returns, sources, designers, drivers, orgSettings] = await Promise.all([
             SupabaseService.getOrders(),
             SupabaseService.getPickups(),
+            SupabaseService.getReturns(),
             SupabaseService.getSources(),
             SupabaseService.getDesigners(),
             SupabaseService.getDrivers(),
@@ -269,6 +274,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           console.log('OrderContext: Data loaded from Supabase:', {
             orders: orders.length,
             pickups: pickups.length,
+            returns: returns.length,
             sources: sources.length,
             designers: designers.length,
             drivers: drivers.length
@@ -276,6 +282,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
           dispatch({ type: 'SET_ORDERS', payload: orders });
           dispatch({ type: 'SET_PICKUPS', payload: pickups });
+          dispatch({ type: 'SET_RETURNS', payload: returns });
           dispatch({ type: 'SET_SOURCES', payload: sources });
           dispatch({ type: 'SET_DESIGNERS', payload: designers });
           dispatch({ type: 'SET_DRIVERS', payload: drivers });
@@ -548,6 +555,67 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
+  // Returns CRUD operations
+  const addReturn = async (returnItem: Omit<Return, 'id' | 'createdAt' | 'updatedAt'>): Promise<Return | null> => {
+    try {
+      console.log('OrderContext: Attempting to add return:', returnItem);
+      
+      if (!isSupabaseConfigured) {
+        // Return mock return for development
+        const mockReturn: Return = {
+          ...returnItem,
+          id: `mock-return-${Date.now()}`,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        dispatch({ type: 'ADD_RETURN', payload: mockReturn });
+        return mockReturn;
+      }
+
+      const result = await SupabaseService.saveReturn(returnItem);
+      console.log('OrderContext: Return creation result:', result);
+      if (result) {
+        dispatch({ type: 'ADD_RETURN', payload: result });
+        dispatch({ type: 'SET_ERROR', payload: null });
+      }
+      return result;
+    } catch (error) {
+      console.error('OrderContext: Error adding return:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add return' });
+      return null;
+    }
+  };
+
+  const updateReturn = async (id: string, updates: Partial<Return>): Promise<Return | null> => {
+    try {
+      const result = await SupabaseService.updateReturn(id, updates);
+      if (result) {
+        dispatch({ type: 'UPDATE_RETURN', payload: result });
+        dispatch({ type: 'SET_ERROR', payload: null });
+      }
+      return result;
+    } catch (error) {
+      console.error('Error updating return:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update return' });
+      return null;
+    }
+  };
+
+  const deleteReturn = async (id: string): Promise<boolean> => {
+    try {
+      const success = await SupabaseService.deleteReturn(id);
+      if (success) {
+        dispatch({ type: 'DELETE_RETURN', payload: id });
+        dispatch({ type: 'SET_ERROR', payload: null });
+      }
+      return success;
+    } catch (error) {
+      console.error('Error deleting return:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete return' });
+      return false;
+    }
+  };
+
   const updateOrganizationalSettings = async (settings: OrganizationalSettings): Promise<boolean> => {
     try {
       const success = await SupabaseService.saveOrganizationalSettings(settings);
@@ -570,9 +638,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       try {
         console.log('OrderContext: Loading data...');
-        const [orders, pickups, sources, designers, drivers, orgSettings] = await Promise.all([
+        const [orders, pickups, returns, sources, designers, drivers, orgSettings] = await Promise.all([
           SupabaseService.getOrders(),
           SupabaseService.getPickups(),
+          SupabaseService.getReturns(),
           SupabaseService.getSources(),
           SupabaseService.getDesigners(),
           SupabaseService.getDrivers(),
@@ -583,6 +652,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         
         dispatch({ type: 'SET_ORDERS', payload: orders });
         dispatch({ type: 'SET_PICKUPS', payload: pickups });
+        dispatch({ type: 'SET_RETURNS', payload: returns });
         dispatch({ type: 'SET_SOURCES', payload: sources });
         dispatch({ type: 'SET_DESIGNERS', payload: designers });
         dispatch({ type: 'SET_DRIVERS', payload: drivers });
@@ -606,6 +676,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     addPickup,
     updatePickup,
     deletePickup,
+    addReturn,
+    updateReturn,
+    deleteReturn,
     addSource,
     updateSource,
     deleteSource,

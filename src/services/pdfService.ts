@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { Pickup, Order, Manufacturer, Designer, Driver } from '../types';
+import { Pickup, Order, Source, Designer, Driver, Return } from '../types';
 
 export class PDFService {
   static async exportPickupPDF(pickup: Pickup, orders: Order[], sources: Source[], designers: Designer[], driver: Driver | undefined) {
@@ -22,6 +22,28 @@ export class PDFService {
     
     // Save the PDF
     doc.save(`pickup-${pickup.name}-${pickup.scheduledDate.toLocaleDateString()}.pdf`);
+  }
+
+  static async exportReturnPDF(returnItem: Return, orders: Order[], sources: Source[], designers: Designer[], driver: Driver | undefined) {
+    const doc = new jsPDF('landscape');
+    
+    // Get company settings from localStorage
+    const organizationalSettings = this.getOrganizationalSettings();
+    
+    // Simple header
+    this.addSimpleHeader(doc, organizationalSettings);
+    
+    // Return information
+    this.addReturnInfo(doc, returnItem, driver);
+    
+    // Orders table
+    this.addOrdersTable(doc, orders, sources, designers);
+    
+    // Simple footer
+    this.addSimpleFooter(doc, organizationalSettings);
+    
+    // Save the PDF
+    doc.save(`return-${returnItem.name}-${returnItem.scheduledDate.toLocaleDateString()}.pdf`);
   }
 
   static async exportAllPickupsPDF(pickups: Pickup[], orders: Order[], sources: Source[], designers: Designer[], drivers: Driver[]) {
@@ -117,6 +139,33 @@ export class PDFService {
     doc.line(20, 35, pageWidth - 20, 35);
   }
 
+  private static addReturnInfo(doc: jsPDF, returnItem: Return, driver: Driver | undefined) {
+    // Return title
+    doc.setFontSize(16);
+    doc.text('Return Authorization', 20, 40);
+    
+    // Return details
+    doc.setFontSize(12);
+    doc.text(`Return: ${returnItem.name}`, 20, 50);
+    doc.text(`Date: ${returnItem.scheduledDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })}`, 20, 58);
+    
+    doc.text(`Priority: ${returnItem.priority.charAt(0).toUpperCase() + returnItem.priority.slice(1)}`, 20, 66);
+    doc.text(`Status: ${returnItem.status.charAt(0).toUpperCase() + returnItem.status.slice(1)}`, 20, 74);
+    
+    if (driver) {
+      doc.text(`Driver: ${driver.name}`, 120, 50);
+      doc.text(`Vehicle: ${driver.vehicle}`, 120, 58);
+      doc.text(`Phone: ${driver.phone}`, 120, 66);
+    }
+    
+    doc.text(`Orders: ${returnItem.orders.length}`, 120, 74);
+  }
+
   private static addPickupInfo(doc: jsPDF, pickup: Pickup, driver: Driver | undefined) {
     // Section title
     doc.setFontSize(14);
@@ -170,7 +219,7 @@ export class PDFService {
         this.addSimpleHeader(doc, { companyName: 'Company Name' });
       }
       
-      const manufacturer = sources.find(m => m.id === order.manufacturerId);
+              const source = sources.find(s => s.id === order.sourceId);
       
       x = startX;
       doc.setFontSize(8);
@@ -193,8 +242,8 @@ export class PDFService {
       doc.text(order.purchaseOrder || 'N/A', x + 3, y);
       x += columnWidths[3];
       
-      // Manufacturer
-      doc.text(manufacturer?.name || 'N/A', x + 3, y);
+      // Source
+      doc.text(source?.name || 'N/A', x + 3, y);
       x += columnWidths[4];
       
       // Destination

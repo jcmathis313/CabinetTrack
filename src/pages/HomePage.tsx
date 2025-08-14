@@ -146,7 +146,15 @@ const HomePage = () => {
               <div className="p-6 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">Returns</h2>
                 <button
-                  onClick={() => setShowCreateReturn(true)}
+                  onClick={() => {
+                    console.log('HomePage: Create Return button clicked');
+                    try {
+                      setShowCreateReturn(true);
+                      console.log('HomePage: showCreateReturn set to true');
+                    } catch (error) {
+                      console.error('HomePage: Error setting showCreateReturn:', error);
+                    }
+                  }}
                   className="btn-primary flex items-center space-x-2"
                 >
                   <RotateCcw className="h-4 w-4" />

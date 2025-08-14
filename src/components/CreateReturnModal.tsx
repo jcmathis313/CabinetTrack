@@ -10,8 +10,10 @@ interface CreateReturnModalProps {
 }
 
 const CreateReturnModal: React.FC<CreateReturnModalProps> = ({ isOpen, onClose }) => {
+  console.log('CreateReturnModal: Rendering with isOpen:', isOpen);
   const { addReturn, orders, drivers } = useOrder();
   const { user } = useAuth();
+  console.log('CreateReturnModal: Context data - orders:', orders.length, 'drivers:', drivers.length, 'user:', user);
   const [formData, setFormData] = useState({
     name: '',
     orders: [] as string[],
@@ -64,7 +66,8 @@ const CreateReturnModal: React.FC<CreateReturnModalProps> = ({ isOpen, onClose }
     try {
       const result = await addReturn({
         ...formData,
-        organizationId: user?.organizationId || ''
+        organizationId: user?.organizationId || '',
+        scheduledDate: new Date(formData.scheduledDate)
       });
       
       if (result) {

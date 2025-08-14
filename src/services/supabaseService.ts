@@ -1,5 +1,5 @@
 import { supabase } from '../config/supabase'
-import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings } from '../types'
+import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings, Return } from '../types'
 
 export class SupabaseService {
   // Helper method to get current user's organization ID
@@ -848,6 +848,166 @@ export class SupabaseService {
       return true
     } catch (error) {
       console.error('Error saving organizational settings:', error)
+      return false
+    }
+  }
+
+  // Returns
+  static async getReturns(): Promise<Return[]> {
+    try {
+      const organizationId = await this.getCurrentOrganizationId()
+      if (!organizationId) return []
+
+      const { data, error } = await supabase
+        .from('returns')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return data?.map(returnItem => ({
+        id: returnItem.id,
+        organizationId: returnItem.organization_id,
+        name: returnItem.name,
+        orders: returnItem.orders || [],
+        driverId: returnItem.driver_id,
+        status: returnItem.status,
+        priority: returnItem.priority,
+        scheduledDate: new Date(returnItem.scheduled_date),
+        createdAt: new Date(returnItem.created_at),
+        updatedAt: new Date(returnItem.updated_at)
+      })) || []
+    } catch (error) {
+      console.error('Error loading returns:', error)
+      return []
+    }
+  }
+
+  static async saveReturn(returnItem: Omit<Return, 'id' | 'createdAt' | 'updatedAt'>): Promise<Return | null> {
+    try {
+      console.log('SupabaseService: Attempting to save return:', returnItem)
+      const organizationId = await this.getCurrentOrganizationId()
+      console.log('SupabaseService: Organization ID:', organizationId)
+      if (!organizationId) {
+        console.error('SupabaseService: No organization ID found')
+        return null
+      }
+
+      const now = new Date().toISOString()
+      // Map camelCase fields to snake_case for database
+      const dbReturn = {
+        organization_id: organizationId,
+        name: returnItem.name,
+        orders: returnItem.orders,
+        driver_id: returnItem.driverId || null,
+        status: returnItem.status,
+        priority: returnItem.priority,
+        scheduled_date: returnItem.scheduledDate,
+        created_at: now,
+        updated_at: now
+      }
+      
+      console.log('SupabaseService: Inserting return data:', dbReturn)
+      const { data, error } = await supabase
+        .from('returns')
+        .insert([dbReturn])
+        .select()
+        .single()
+
+      if (error) {
+        console.error('SupabaseService: Database error:', error)
+        throw error
+      }
+
+      console.log('SupabaseService: Return saved successfully:', data)
+      
+      // Map back to camelCase
+      return {
+        id: data.id,
+        organizationId: data.organization_id,
+        name: data.name,
+        orders: data.orders || [],
+        driverId: data.driver_id,
+        status: data.status,
+        priority: data.priority,
+        scheduledDate: new Date(data.scheduled_date),
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at)
+      }
+    } catch (error) {
+      console.error('Error saving return:', error)
+      return null
+    }
+  }
+
+  static async updateReturn(id: string, updates: Partial<Return>): Promise<Return | null> {
+    try {
+      console.log('SupabaseService: Updating return:', id, updates)
+      
+      const updateData: any = {
+        updated_at: new Date().toISOString()
+      }
+
+      // Map camelCase fields to snake_case
+      if (updates.name !== undefined) updateData.name = updates.name
+      if (updates.orders !== undefined) updateData.orders = updates.orders
+      if (updates.driverId !== undefined) updateData.driver_id = updates.driverId
+      if (updates.status !== undefined) updateData.status = updates.status
+      if (updates.priority !== undefined) updateData.priority = updates.priority
+      if (updates.scheduledDate !== undefined) updateData.scheduled_date = updates.scheduledDate
+
+      const { data, error } = await supabase
+        .from('returns')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('SupabaseService: Database error:', error)
+        throw error
+      }
+
+      console.log('SupabaseService: Return updated successfully:', data)
+      
+      // Map back to camelCase
+      return {
+        id: data.id,
+        organizationId: data.organization_id,
+        name: data.name,
+        orders: data.orders || [],
+        driverId: data.driver_id,
+        status: data.status,
+        priority: data.priority,
+        scheduledDate: new Date(data.scheduled_date),
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at)
+      }
+    } catch (error) {
+      console.error('Error updating return:', error)
+      return null
+    }
+  }
+
+  static async deleteReturn(id: string): Promise<boolean> {
+    try {
+      console.log('SupabaseService: Deleting return:', id)
+      
+      const { error } = await supabase
+        .from('returns')
+        .delete()
+        .eq('id', id)
+
+      if (error) {
+        console.error('SupabaseService: Database error:', error)
+        throw error
+      }
+
+      console.log('SupabaseService: Return deleted successfully')
+      return true
+    } catch (error) {
+      console.error('Error deleting return:', error)
       return false
     }
   }
