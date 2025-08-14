@@ -127,7 +127,7 @@ const ReturnList: React.FC = () => {
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(returnItem.priority)}`}>
                         {returnItem.priority}
                       </span>
-                      <StatusBadge status={returnItem.status} />
+                      <StatusBadge type="status" value={returnItem.status} />
                     </div>
                   </div>
 
@@ -213,7 +213,7 @@ const ReturnList: React.FC = () => {
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(returnItem.priority)}`}>
                         {returnItem.priority}
                       </span>
-                      <StatusBadge status={returnItem.status} />
+                      <StatusBadge type="status" value={returnItem.status} />
                     </div>
                   </div>
                 </div>

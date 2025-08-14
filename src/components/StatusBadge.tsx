@@ -1,20 +1,22 @@
 import React from 'react';
-import { OrderStatus, OrderPriority, PickupStatus, PickupPriority } from '../types';
+import { OrderStatus, OrderPriority, PickupStatus, PickupPriority, ReturnStatus } from '../types';
 
 interface StatusBadgeProps {
   type: 'status' | 'priority';
-  value: OrderStatus | OrderPriority | PickupStatus | PickupPriority;
+  value: OrderStatus | OrderPriority | PickupStatus | PickupPriority | ReturnStatus;
   size?: 'sm' | 'md' | 'lg';
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ type, value, size = 'md' }) => {
-  const getStatusColor = (status: OrderStatus | PickupStatus) => {
+  const getStatusColor = (status: OrderStatus | PickupStatus | ReturnStatus) => {
     switch (status) {
       case OrderStatus.PENDING:
       case PickupStatus.SCHEDULED:
+      case ReturnStatus.SCHEDULED:
         return 'bg-gray-100 text-gray-800';
       case OrderStatus.IN_PROGRESS:
       case PickupStatus.IN_PROGRESS:
+      case ReturnStatus.IN_PROGRESS:
         return 'bg-blue-100 text-blue-800';
       case OrderStatus.READY_FOR_PICKUP:
         return 'bg-yellow-100 text-yellow-800';
@@ -24,11 +26,14 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ type, value, size = 'md' }) =
         return 'bg-purple-100 text-purple-800';
       case OrderStatus.DELIVERED:
       case PickupStatus.COMPLETED:
+      case ReturnStatus.COMPLETED:
         return 'bg-green-100 text-green-800';
       case OrderStatus.CANCELLED:
       case PickupStatus.CANCELLED:
+      case ReturnStatus.CANCELLED:
         return 'bg-red-100 text-red-800';
       case PickupStatus.ARCHIVED:
+      case ReturnStatus.ARCHIVED:
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -70,7 +75,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ type, value, size = 'md' }) =
   };
 
   const colorClass = type === 'status' 
-    ? getStatusColor(value as OrderStatus | PickupStatus)
+    ? getStatusColor(value as OrderStatus | PickupStatus | ReturnStatus)
     : getPriorityColor(value as OrderPriority | PickupPriority);
 
   return (
