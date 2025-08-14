@@ -4,6 +4,7 @@ import { useOrder } from '../contexts/OrderContext';
 import { Return, ReturnStatus, Order, Driver } from '../types';
 import { PDFService } from '../services/pdfService';
 import StatusBadge from './StatusBadge';
+import EditReturnModal from './EditReturnModal';
 
 const ReturnList: React.FC = () => {
   const { returns, drivers, orders, sources, designers, updateReturn } = useOrder();
@@ -67,10 +68,10 @@ const ReturnList: React.FC = () => {
   const archivedReturns = returns.filter(returnItem => returnItem.status === ReturnStatus.ARCHIVED);
 
   return (
-    <div className="space-y-6">
+    <div className="p-3">
       {/* Active Returns */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Active Returns</h3>
+        <h3 className="text-base font-medium text-gray-900 mb-3">Active Returns</h3>
         {activeReturns.length === 0 ? (
           <div className="text-center py-8">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -169,8 +170,8 @@ const ReturnList: React.FC = () => {
 
       {/* Archived Returns */}
       {archivedReturns.length > 0 && (
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Archived Returns</h3>
+        <div className="mt-6">
+          <h3 className="text-base font-medium text-gray-900 mb-3">Archived Returns</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {archivedReturns.map(returnItem => {
               const returnOrders = orders.filter(order => returnItem.orders.includes(order.id));
@@ -222,6 +223,13 @@ const ReturnList: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* Edit Return Modal */}
+      <EditReturnModal
+        isOpen={!!editingReturn}
+        onClose={() => setEditingReturn(null)}
+        returnItem={editingReturn}
+      />
     </div>
   );
 };

@@ -112,20 +112,6 @@ const PickupList: React.FC = () => {
 
   return (
     <div className="p-3">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-        <div className="flex items-center gap-2">
-          {Object.keys(filters).length > 0 && (
-            <button
-              onClick={clearFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Filters */}
       <div className="bg-white p-3 rounded-lg border border-gray-200 mb-4">
         <h3 className="text-base font-medium text-gray-900 mb-3">Filter Pickups</h3>

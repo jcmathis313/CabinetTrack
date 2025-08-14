@@ -110,7 +110,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   }
 
   return (
-    <div>
+    <div className="p-3">
       {/* Filters */}
       <div className="bg-white p-3 rounded-lg border border-gray-200 mb-4">
         <h3 className="text-base font-medium text-gray-900 mb-3">Filter Orders</h3>
