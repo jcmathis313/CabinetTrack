@@ -182,6 +182,14 @@ export enum PickupStatus {
   ARCHIVED = 'archived'
 }
 
+export enum ReturnStatus {
+  SCHEDULED = 'scheduled',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  ARCHIVED = 'archived'
+}
+
 export enum PickupPriority {
   LOW = 'low',
   STANDARD = 'standard',
@@ -212,6 +220,30 @@ export interface FilterOption {
 
 export interface PickupFilter {
   status?: PickupStatus;
+  driverId?: string;
+  priority?: PickupPriority;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  showArchived?: boolean;
+}
+
+export interface Return {
+  id: string;
+  organizationId: string;
+  name: string;
+  orders: string[]; // Array of order IDs
+  driverId?: string;
+  status: ReturnStatus;
+  priority: PickupPriority;
+  scheduledDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ReturnFilter {
+  status?: ReturnStatus;
   driverId?: string;
   priority?: PickupPriority;
   dateRange?: {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings } from '../types';
+import { Order, Pickup, Source, Designer, Driver, OrganizationalSettings, Return } from '../types';
 import { SupabaseService } from '../services/supabaseService';
 import { SubscriptionService } from '../services/subscriptionService';
 import { isSupabaseConfigured } from '../config/supabase';
@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from '../config/supabase';
 interface OrderState {
   orders: Order[];
   pickups: Pickup[];
+  returns: Return[];
   sources: Source[];
   designers: Designer[];
   drivers: Driver[];
@@ -38,11 +39,16 @@ type OrderAction =
   | { type: 'ADD_DRIVER'; payload: Driver }
   | { type: 'UPDATE_DRIVER'; payload: Driver }
   | { type: 'DELETE_DRIVER'; payload: string }
+  | { type: 'SET_RETURNS'; payload: Return[] }
+  | { type: 'ADD_RETURN'; payload: Return }
+  | { type: 'UPDATE_RETURN'; payload: Return }
+  | { type: 'DELETE_RETURN'; payload: string }
   | { type: 'SET_ORGANIZATIONAL_SETTINGS'; payload: OrganizationalSettings };
 
 const initialState: OrderState = {
   orders: [],
   pickups: [],
+  returns: [],
   sources: [],
   designers: [],
   drivers: [],
@@ -105,6 +111,14 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { ...state, drivers: state.drivers.map(driver => driver.id === action.payload.id ? action.payload : driver) };
     case 'DELETE_DRIVER':
       return { ...state, drivers: state.drivers.filter(driver => driver.id !== action.payload) };
+    case 'SET_RETURNS':
+      return { ...state, returns: action.payload };
+    case 'ADD_RETURN':
+      return { ...state, returns: [action.payload, ...state.returns] };
+    case 'UPDATE_RETURN':
+      return { ...state, returns: state.returns.map(returnItem => returnItem.id === action.payload.id ? action.payload : returnItem) };
+    case 'DELETE_RETURN':
+      return { ...state, returns: state.returns.filter(returnItem => returnItem.id !== action.payload) };
     case 'SET_ORGANIZATIONAL_SETTINGS':
       return { ...state, organizationalSettings: action.payload };
     default:
